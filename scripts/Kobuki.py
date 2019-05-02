@@ -5,6 +5,10 @@ from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Imu
 
 
+'''
+roslaunch turtlebot_bringup minimal.launch
+'''
+
 class Kobuki(object):
 
 	def __init__(self, name="mobile_base"):
