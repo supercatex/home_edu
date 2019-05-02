@@ -3,14 +3,14 @@ import rospy
 import roslib
 import cv2 as cv
 import numpy as np
-import ROS_Topic as T
+from libs import ROS_Topic as T
 from cv_bridge import CvBridge
 from sensor_msgs.msg import Image
 
 
-class Camera(object):
+class Astra(object):
 
-	def __init__(self, name):
+	def __init__(self, name="camera"):
 		self.topic = T.Astra(name)
 		self.bridge = CvBridge()
 		self.rgb_image = None
@@ -29,6 +29,10 @@ class Camera(object):
 			self.depth_callback, 
 			queue_size = 1
 		)
+		
+		while self.rgb_image is None: pass
+		while self.depth_image is None: pass
+		print("Astra (%s) is OK." % self.topic.name)
 	
 	def rgb_callback(self, msg):
 		self.rgb_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
@@ -48,8 +52,9 @@ class Camera(object):
 
 if __name__ == "__main__":
 	rospy.init_node("home_edu_camera", anonymous=True)
+	rate = rospy.Rate(20)
 	try:
-		c = Camera("cam1")
+		c = Astra()
 		cv.namedWindow("image")
 		cv.setMouseCallback("image", c.mouse_callback)
 		while not rospy.is_shutdown():
@@ -58,6 +63,7 @@ if __name__ == "__main__":
 			cv.imshow("image", c.rgb_image)
 			if cv.waitKey(1) == 27:
 				break
+			rate.sleep()
 	except Exception as e:
 		print(e)
 	finally:
