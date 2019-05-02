@@ -8,6 +8,8 @@ import math
 import time
 
 
+# roslaunch rchomeedu_arm arm.launch
+
 class Dynamixel(object):
 
 	def __init__(self, name="tilt_controller"):
