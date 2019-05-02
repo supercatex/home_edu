@@ -8,8 +8,10 @@ from cv_bridge import CvBridge
 from sensor_msgs.msg import Image
 
 
-# roslaunch astra_launch astra.launch camera:="cam1" device_id:="2bc5/0401@1/10"
-# roslaunch astra_launch astra.launch camera:="cam2" device_id:="2bc5/0401@1/11"
+'''
+roslaunch astra_launch astra.launch camera:="cam1" device_id:="2bc5/0401@1/10"
+roslaunch astra_launch astra.launch camera:="cam2" device_id:="2bc5/0401@1/11"
+'''
 
 class Astra(object):
 
