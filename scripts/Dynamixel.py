@@ -8,7 +8,9 @@ import math
 import time
 
 
-# roslaunch rchomeedu_arm arm.launch
+'''
+roslaunch rchomeedu_arm arm.launch
+'''
 
 class Dynamixel(object):
 
