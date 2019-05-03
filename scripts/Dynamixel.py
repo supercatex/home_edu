@@ -54,13 +54,14 @@ if __name__ == "__main__":
 	rospy.init_node("home_edu_dynamixel", anonymous=True)
 	rate = rospy.Rate(20)
 	servo = Dynamixel("waist_controller")
-	servo.set_speed(0.1)
+	servo.set_speed(0.3)
 	if servo.state.current_pos > 1:
 		servo.set_radian(0)
 	else:
-		servo.set_radian(math.pi / 2)
+		servo.set_radian(math.pi / 4)
 	
 	time.sleep(1)
 	while servo.state.is_moving:
 		print(servo.state)
 		rate.sleep()
+
