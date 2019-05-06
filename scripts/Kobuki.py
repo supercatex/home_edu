@@ -52,6 +52,6 @@ if __name__ == "__main__":
 	
 	while chassis.imu.orientation.z < 0.9:
 		print(chassis.imu.orientation)
-		chassis.action(0, 0.3)
+		chassis.action(-0.3, 0)
 		rate.sleep()
 	print(chassis.imu.orientation)

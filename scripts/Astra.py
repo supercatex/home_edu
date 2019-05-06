@@ -13,8 +13,8 @@ roslaunch astra_launch astra.launch camera:="cam1" device_id:="2bc5/0401@1/10"
 roslaunch astra_launch astra.launch camera:="cam2" device_id:="2bc5/0401@1/11"
 '''
 
-class Astra(object):
 
+class Astra(object):
 	def __init__(self, name="camera"):
 		self.topic = T.Astra(name)
 		self.bridge = CvBridge()
@@ -66,7 +66,7 @@ if __name__ == "__main__":
 			if c.rgb_image is None or c.depth_image is None:
 				continue
 			cv.imshow("image", c.rgb_image)
-			if cv.waitKey(1) == 27:
+			if cv.waitKey(1) == ord('q'):
 				break
 			rate.sleep()
 	except Exception as e:
