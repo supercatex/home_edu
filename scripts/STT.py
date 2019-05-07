@@ -3,6 +3,19 @@ import rospy
 import speech_recognition
 
 
+'''
+/usr/share/alsa/alsa.conf
+#pcm.rear cards.pcm.rear
+#pcm.center_lfe cards.pcm.center_lfe
+#pcm.side cards.pcm.side
+#pcm.surround21 cards.pcm.surround21
+#pcm.surround40 cards.pcm.surround40
+#pcm.surround41 cards.pcm.surround41
+#pcm.surround50 cards.pcm.surround50
+#pcm.surround51 cards.pcm.surround51
+#pcm.surround71 cards.pcm.surround71
+'''
+
 class Speech2Text(object):
 
     def __init__(self, lang="en-US"):
