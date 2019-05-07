@@ -25,6 +25,8 @@ class Manipulator(object):
 		self.target_y = 0
 		self.target_z = 0
 		self.target_w = 0
+	
+	def reset(self):
 		self.exec_servos_pos(0, Manipulator.ARM_LENGTH * 2, 0, -90)
 		self.close()
 		self.wait()
@@ -94,6 +96,7 @@ class Manipulator(object):
 if __name__ == "__main__":
 	rospy.init_node("home_edu_arm", anonymous=True)
 	manipulator = Manipulator()
+	manipulator.reset()
 	
 	manipulator.exec_servos_pos(10, 5, 0, 45)
 	manipulator.wait()

@@ -18,7 +18,7 @@ class Speaker(object):
 	
 	def set_voice(self, voice_id):
 		voices = self.engine.getProperty("voices")
-		print(len(voices))
+		#print(len(voices))
 		if voice_id >= 0 and voice_id < len(voices):
 			voice = voices[voice_id]
 			self.engine.setProperty("voice", voice.id)
@@ -31,8 +31,6 @@ class Speaker(object):
 
 
 if __name__ == "__main__":
-	for i in range(69):
-		print(i)
-		P = Speaker(voice_id=i)
-		P.say("Hello, my name is John!")
-		# 2, 9, 10, 11, 14, 15, 17, 22
+	P = Speaker()
+	P.say("Good afternoon, what's your name")
+	# 2, 9, 10, 11, 14, 15, 17, 22

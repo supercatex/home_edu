@@ -41,6 +41,7 @@ if __name__ == "__main__":
     s = Speech2Text()
     s.ambient_noise()
     while True:
+        print("ready")
         t = s.listen()
         print(t)
 	if t == "goodbye":
