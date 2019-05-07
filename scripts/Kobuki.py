@@ -3,6 +3,7 @@ import rospy
 from libs import ROS_Topic as T
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Imu
+import time
 
 
 '''
@@ -49,9 +50,21 @@ if __name__ == "__main__":
 	rospy.init_node("home_edu_kobuki", anonymous=True)
 	rate = rospy.Rate(20)
 	chassis = Kobuki()
-	
-	while chassis.imu.orientation.z < 0.9:
-		print(chassis.imu.orientation)
-		chassis.action(-0.3, 0)
+
+	last_time = time.time()
+
+	while not rospy.is_shutdown():
+		if chassis.imu.orientation.z >= 0:
+			chassis.action(0, 0.3)
+
+		if chassis.imu.orientation.z <= 0:
+			chassis.action(0, -0.3)
+
+		if abs(chassis.imu.orientation.z) > 0.99:
+			break
+
+		last_time = time.time() - last_time
 		rate.sleep()
-	print(chassis.imu.orientation)
+		print(chassis.imu.orientation)
+
+		print("Ok, used time: {}".format(round(last_time, 2)))
