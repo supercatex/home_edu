@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import rospy
-from .ROS_Topic import ROS_Topic_Dynamixel as T
+from ROS_Topic import ROS_Topic_Dynamixel as T
 from std_msgs.msg import Float64
 from dynamixel_controllers.srv import SetSpeed
 from dynamixel_msgs.msg import JointState
