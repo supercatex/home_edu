@@ -10,15 +10,16 @@ from sensor_msgs.msg import Image
 from libs import ROS_Topic as T
 from Astra import Astra as astra
 from Kobuki import Kobuki as kobuki
-from pyttsx3 import init
+# from pyttsx3 import init
+from Speaker import Speaker as speaker
 
 
-def speak(*args):
-    for arg in args:
-        print(arg)
-        engine.say(arg)
-        engine.runAndWait()
-
+# def speak(*args):
+#     for arg in args:
+#         print(arg)
+#         engine.say(arg)
+#         engine.runAndWait()
+#
 
 if __name__ == '__main__':
     # face_cascade = cv.CascadeClassifier('/home/mustar/pcms/src/home_edu/scripts/libs/haarcascade_frontalface_default.xml')
@@ -27,7 +28,7 @@ if __name__ == '__main__':
 
     MODEL_MEAN_VALUES = (78.4263377603, 87.7689143744, 114.895847746)
     gender_list = ['Male', 'Female']
-    engine = init()
+    # engine = init()
 
     gender_net = cv.dnn.readNetFromCaffe(
         '/home/mustar/pcms/src/home_edu/scripts/libs/deploy_gender.prototxt',
@@ -39,6 +40,10 @@ if __name__ == '__main__':
     rate = rospy.Rate(20)
 
     _detector = dlib.get_frontal_face_detector()
+
+    # Init the speaker cam and kobuki
+    P = speaker(100)
+
     c = astra("cam2")
     # chassis = kobuki()
     cv.namedWindow("image")
@@ -98,6 +103,6 @@ if __name__ == '__main__':
             break
         rate.sleep()
 
-    speak("I see {} man in this picture and {} women in this picture".format(str(male_count), str(female_count)))
+    P.say("I see {} man in this picture and {} women in this picture".format(str(male_count), str(female_count)))
 
     cv.destroyAllWindows()

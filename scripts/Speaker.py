@@ -26,11 +26,12 @@ class Speaker(object):
 			print("No voice id: ", voice_id)
 	
 	def say(self, msg, log=False):
+		print(msg)
 		self.engine.say(msg)
 		self.engine.runAndWait()
 
 
 if __name__ == "__main__":
-	P = Speaker()
-	P.say("Good afternoon, what's your name")
+	P = Speaker(180)
+	P.say("Good afternoon, what's your name, I am raspberry pi, I am your best mini computer that can do a lot of things")
 	# 2, 9, 10, 11, 14, 15, 17, 22

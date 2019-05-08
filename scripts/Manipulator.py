@@ -42,7 +42,10 @@ class Manipulator(object):
 			return
 		
 		alpha = [0, 0, 0, 0]
-		x = math.sqrt(x * x + z * z)
+		t = 0
+		if x != 0:
+			t = abs(x) / x
+		x = math.sqrt(x * x + z * z) * t
 		if x != 0:
 			alpha[0] = math.asin(z / x)
 		
