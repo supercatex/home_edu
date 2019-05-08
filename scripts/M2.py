@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 import rospy
-from .core import Manipulator
+from M3 import M3
 import math
 
-class M2(Manipulator):
+class M2(M3): 
 	ARM_LENGTH = 10.5
 	HAND_LENGTH = 12.6
 
@@ -29,10 +29,10 @@ class M2(Manipulator):
 		if r >= M2.ARM_LENGTH * 1.5 and r <= M2.ARM_LENGTH * 2 + 12.6:
 			print("run")
 			print(x, y, z, w)
-			super(M2, self).exec_servos_pos(x, y, z, w)
+			super(M3, self).exec_servos_pos(x, y, z, w)
 		else:
 		 	print("not in range")
-		
+
 
 
 if __name__ == "__main__":

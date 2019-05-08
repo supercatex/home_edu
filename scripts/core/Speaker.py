@@ -32,10 +32,10 @@ class Speaker(object):
 
 
 if __name__ == "__main__":
-	P = Speaker(100)
-	for i in range(10, 18, 1):
-		P.set_voice(10)
-		print(i)
-		P.say("I see 1 man in this picture and 2 women in this picture.")
-	# P.say("Good afternoon, what's your name, I am raspberry pi, I am your best mini computer that can do a lot of things")
+	P = Speaker(140, 1.0, 16)
+	# for i in range(10, 18, 1):
+	# 	P.set_voice(10)
+	# 	print(i)
+	P.say("I see 1 man in this picture and 2 women in this picture.")
+	P.say("Good afternoon, what's your name, I am raspberry pi, I am your best mini computer that can do a lot of things")
 	# 2, 9, 10, 11, 14, 15, 17, 22
