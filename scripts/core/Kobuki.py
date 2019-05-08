@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import rospy
-from libs import ROS_Topic as T
+from .ROS_Topic import ROS_Topic_Kobuki as T
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Imu
 import time
@@ -13,7 +13,7 @@ roslaunch turtlebot_bringup minimal.launch
 class Kobuki(object):
 
 	def __init__(self, name="mobile_base"):
-		self.topic = T.Kobuki(name)
+		self.topic = T(name)
 		self.imu = None
 		
 		self.publisher = rospy.Publisher(

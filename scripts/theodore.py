@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import rospy
-from Dynamixel import Dynamixel
+from .core import Dynamixel
 import math
 import speech_recognition as sr
 import numpy as np

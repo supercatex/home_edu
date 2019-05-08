@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import rospy
-from libs import ROS_Topic as T
+from .ROS_Topic import ROS_Topic_Dynamixel as T
 from std_msgs.msg import Float64
 from dynamixel_controllers.srv import SetSpeed
 from dynamixel_msgs.msg import JointState
@@ -15,7 +15,7 @@ roslaunch rchomeedu_arm arm.launch
 class Dynamixel(object):
 
 	def __init__(self, name="tilt_controller"):
-		self.topic = T.Dynamixel(name)
+		self.topic = T(name)
 		self.state = None
 		
 		self.publisher = rospy.Publisher(

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import rospy
-from Manipulator import Manipulator
+from .core import Manipulator
 import math
 
 class M2(Manipulator):

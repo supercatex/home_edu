@@ -8,10 +8,10 @@ import numpy as np
 from cv_bridge import CvBridge
 from sensor_msgs.msg import Image
 from libs import ROS_Topic as T
-from Astra import Astra as astra
+from .core import Astra as astra
 from Kobuki import Kobuki as kobuki
 # from pyttsx3 import init
-from Speaker import Speaker as speaker
+from .core import Speaker as speaker
 
 
 # def speak(*args):

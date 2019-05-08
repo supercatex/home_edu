@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 import rospy
 import cv2 as cv
-from Astra import Astra
-from Manipulator import Manipulator
+from .Astra import Astra
+from .Manipulator import Manipulator
 import math
 
 

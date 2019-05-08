@@ -1,3 +1,3 @@
-from Manipulator import Manipulator
+from .core import Manipulator
 
 m = Manipulator()

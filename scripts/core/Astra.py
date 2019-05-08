@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 import rospy
-import roslib
 import cv2 as cv
 import numpy as np
-from libs import ROS_Topic as T
+from .ROS_Topic import ROS_Topic_Astra as T
 from cv_bridge import CvBridge
 from sensor_msgs.msg import Image
 
@@ -16,7 +15,7 @@ roslaunch astra_launch astra.launch camera:="cam2" device_id:="2bc5/0401@1/11"
 
 class Astra(object):
 	def __init__(self, name="camera"):
-		self.topic = T.Astra(name)
+		self.topic = T(name)
 		self.bridge = CvBridge()
 		self.rgb_image = None
 		self.depth_image = None

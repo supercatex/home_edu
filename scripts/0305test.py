@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import rospy
-from Dynamixel import Dynamixel
+from .core import Dynamixel
 import math
 import numpy as np
 import time

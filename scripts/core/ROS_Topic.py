@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
 
-class Astra(object):
+class ROS_Topic_Astra(object):
 
 	def __init__(self, name="camera"):
 		self.name = name
@@ -13,7 +13,7 @@ class Astra(object):
 		return "/%s/depth/image_raw" % (self.name)
 
 
-class Dynamixel(object):
+class ROS_Topic_Dynamixel(object):
 
 	def __init__(self, name="tilt_controller"):
 		self.name = name
@@ -28,7 +28,7 @@ class Dynamixel(object):
 		return "/%s/state" % (self.name)
 
 
-class Kobuki(object):
+class ROS_Topic_Kobuki(object):
 
 	def __init__(self, name="mobile_base"):
 		self.name = name

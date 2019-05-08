@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 import rospy
-from Manipulator import Manipulator
+from .core import Manipulator
 import math
-from Dynamixel import Dynamixel
+from .core import Dynamixel
 import numpy as np
 import sys, termios, tty, os, time
 ARM_LENGTH = 10.5
