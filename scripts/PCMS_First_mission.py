@@ -1,17 +1,24 @@
 #!/usr/bin/env python
 
 import rospy
-import roslib
+# import roslib
 import cv2 as cv
 import dlib
 import numpy as np
 from cv_bridge import CvBridge
 from sensor_msgs.msg import Image
-from libs import ROS_Topic as T
-from .core import Astra as astra
-from Kobuki import Kobuki as kobuki
+from core import Astra as astra
+# from Kobuki import Kobuki as kobuki
 # from pyttsx3 import init
-from .core import Speaker as speaker
+from core import Speaker as speaker
+
+
+def Recognize_gender(image, model_values):
+    blob = cv.dnn.blobFromImage(image, 1, (227, 227), model_values, swapRB=False)
+    gender_net.setInput(blob)
+    gender_preds = gender_net.forward()
+    gender = gender_list[gender_preds[0].argmax()]
+    return gender
 
 
 # def speak(*args):
@@ -53,6 +60,7 @@ if __name__ == '__main__':
             continue
 
         frame = c.rgb_image
+        cv.imwrite('./temp.jpg', frame)
         gray = cv.cvtColor(c.rgb_image, cv.COLOR_RGB2GRAY)
 
         dets, _, _ = _detector.run(frame, False)
@@ -73,14 +81,15 @@ if __name__ == '__main__':
             face_img = cv.resize(face_img, (227, 227))
             # cv.imshow("face_img", face_img)
             # cv.waitKey(0)
-            blob = cv.dnn.blobFromImage(face_img, 1, (227, 227), MODEL_MEAN_VALUES, swapRB=False)
+            # blob = cv.dnn.blobFromImage(face_img, 1, (227, 227), MODEL_MEAN_VALUES, swapRB=False)
             # print(blob)
             color = (255, 0, 0)
 
             # Recognize gender
-            gender_net.setInput(blob)
-            gender_preds = gender_net.forward()
-            gender = gender_list[gender_preds[0].argmax()]
+            # gender_net.setInput(blob)
+            # gender_preds = gender_net.forward()
+            # gender = gender_list[gender_preds[0].argmax()]
+            gender = Recognize_gender(frame, MODEL_MEAN_VALUES)
             print("Face in picture's gender is {}".format(gender))
 
             if gender == 'Male':

@@ -4,7 +4,7 @@ import pyttsx3
 
 class Speaker(object):
 
-	def __init__(self, speed=100, volume=1.0, voice_id=2):
+	def __init__(self, speed=100, volume=1.0, voice_id=16):
 		self.engine = pyttsx3.init()
 		self.set_speed(speed)
 		self.set_volume(volume)
@@ -32,6 +32,10 @@ class Speaker(object):
 
 
 if __name__ == "__main__":
-	P = Speaker(180)
-	P.say("Good afternoon, what's your name, I am raspberry pi, I am your best mini computer that can do a lot of things")
+	P = Speaker(100)
+	for i in range(10, 18, 1):
+		P.set_voice(10)
+		print(i)
+		P.say("I see 1 man in this picture and 2 women in this picture.")
+	# P.say("Good afternoon, what's your name, I am raspberry pi, I am your best mini computer that can do a lot of things")
 	# 2, 9, 10, 11, 14, 15, 17, 22
