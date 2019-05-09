@@ -58,10 +58,11 @@ def Answer_question(text):
         for key in data.question.keys():
             if key in text:
                 return data.question[key]
+        return 'Please ask again'
 
     except Exception as e:
         print(e)
-        return "Ask again"
+        return "Please ask again"
 
 
 # def speak(*args):
@@ -74,9 +75,13 @@ def Answer_question(text):
 if __name__ == '__main__':
     # face_cascade = cv.CascadeClassifier('/home/mustar/pcms/src/home_edu/scripts/libs/haarcascade_frontalface_default.xml')
 
+    # Init the speaker cam and kobuki
+    P = speaker()
+
     # base_path = os.path.abspath("./")
     time.sleep(4)
 
+    P.say("I will start now")
     male_count, female_count = 0, 0
 
     r = sr.Recognizer()
@@ -97,9 +102,6 @@ if __name__ == '__main__':
     _detector = dlib.get_frontal_face_detector()
     image_path = "/home/mustar/pcms/src/home_edu/scripts/temp.jpg"
 
-    # Init the speaker cam and kobuki
-    P = speaker()
-
     c = astra("cam2")
     chassis = kobuki()
     cv.namedWindow("image")
@@ -109,9 +111,9 @@ if __name__ == '__main__':
         a = turn_180_degree(chassis)
 
         if a == 0:
-            P.say("Hello, may I have your attention please? I am going to take a photo of you, please ready")
+            P.say("Hello, may I have your attention please? I am going to take a photo for you, please ready")
             time.sleep(2)
-            P.say("Please look at my top camera. Ready? 4, 3, 2, 1, say chieese")
+            P.say("Please look at my top camera. Ready? 3, 2, 1, chieese")
             frame = c.rgb_image
             image = cv.resize(frame, (1280, 960))
             time.sleep(1)
@@ -188,11 +190,16 @@ if __name__ == '__main__':
     time.sleep(2)
 
     P.say("I'm ready")
+    Question_count = 0
     # Question part
     while not rospy.is_shutdown():
-        Question_count = 0
         P.say("Please ask")
 
         operator_question = speech_to_text()
 
         P.say(Answer_question(operator_question))
+
+        if Question_count == 5:
+            break
+
+        Question_count += 1
