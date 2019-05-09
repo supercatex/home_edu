@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import rospy
-from .core import Manipulator
+from core import Manipulator
 import math
 import numpy as np
 
