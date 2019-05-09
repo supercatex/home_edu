@@ -81,15 +81,28 @@ class Kobuki(object):
 
 # How to use?
 if __name__ == "__main__":
+
     rospy.init_node("home_edu_kobuki", anonymous=True)
     rate = rospy.Rate(20)
     
     # 1. Create a Kobuki object.
     chassis = Kobuki()
     
-    # 2. Move action.
-    chassis.move(0, 0.3)
-    time.sleep(3)
-    
-    # 3. Right rotation.
-    chassis.anticlockwise_to(0.6)
+    # # 2. Move action.
+    # chassis.move(0, 0.3)
+    # time.sleep(3)
+    #
+    # # 3. Right rotation.
+    # chassis.anticlockwise_to(0.6)
+    while not rospy.is_shutdown():
+        z = chassis.imu.orientation.z
+        print(chassis.imu.orientation)
+        if not abs(z) >= 0.99:
+            if z <= 1:
+                chassis.move(0, 0.3)
+
+            elif z >= 1:
+                chassis.move(0, -0.3)
+        else:
+            break
+

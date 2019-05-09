@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import actionlib
 import rospy
-from geometry_msgs.msg import Pose, PoseWithCovarianceStamped, Point, Quaternion
+from geometry_msgs.msg import Pose, PoseWithCovarianceStamped, Point, Quaternion, PointStamped
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from tf.transformations import quaternion_from_euler
 
@@ -36,25 +36,53 @@ class RobotChassis:
         # Instance variables.
         self.frame_id = frame_id
         self.initial_pose = PoseWithCovarianceStamped()
-        self.goal = None
+        self.current_pose = PoseWithCovarianceStamped()
+        self.goal = MoveBaseGoal()
 
         # Register shutdown event handler.
         rospy.on_shutdown(self.shutdown)
         
         # Subscribe initialpose topic.
         rospy.Subscriber(
-            "initialpose",
+            "/initialpose",
             PoseWithCovarianceStamped,
-            self.update_initial_pose
+            self.initialpose_callback
         )
+        
+        # Subscribe amcl_pose topic.
+        rospy.Subscriber(
+            "/amcl_pose",
+            PoseWithCovarianceStamped,
+            self.amcl_pose_callback
+        )
+        
+        # Subscribe clicked_point topic.
+        rospy.Subscriber(
+            "/clicked_point",
+            PointStamped,
+            self.clicked_point_callback
+        )
+        
+        # Cancel preview goal.
+        self.move_base.cancel_goal()
     
     # Set current pose.
-    def set_pose(self):
+    def set_initial_pose(self):
         self.initial_pose = PoseWithCovarianceStamped()
         rospy.loginfo("Waiting for the robot's initial pose...")
         rospy.wait_for_message("initialpose", PoseWithCovarianceStamped)
         rospy.loginfo("Set initial pose finished.")
         return self.initial_pose.header.stamp != ""
+    
+    def get_clicked_point(self):
+        rospy.loginfo("Waiting for the robot's clicked point...")
+        rospy.wait_for_message("/clicked_point", PointStamped)
+        rospy.loginfo("Get clicked point (%.2f, %.2f, %.2f)" % (
+            self.last_clicked_point.point.x,
+            self.last_clicked_point.point.y,
+            self.last_clicked_point.point.z
+        ))
+        return self.last_clicked_point
     
     @staticmethod
     def point_to_pose(x, y, theta):
@@ -83,8 +111,14 @@ class RobotChassis:
         self.move_base.cancel_goal()
     
     # ROS initialpose topic callback.
-    def update_initial_pose(self, initial_pose):
+    def initialpose_callback(self, initial_pose):
         self.initial_pose = initial_pose
+    
+    def amcl_pose_callback(self, pose):
+        self.current_pose = pose
+    
+    def clicked_point_callback(self, point):
+        self.last_clicked_point = point
 
 
 # How to use?
@@ -95,7 +129,13 @@ if __name__ == "__main__":
     chassis = RobotChassis()
     
     # 2. Set current pose at the first time.
-    chassis.set_pose()
+    chassis.set_initial_pose()
     
-    # 3. Move to Point.
-    chassis.move_to(0, 0, 0)
+    # 3. Get a target point from rviz tool.
+    p = chassis.get_clicked_point()
+    rospy.loginfo("%.2f, %.2f, %.2f" % (p.point.x, p.point.y, p.point.z))
+    
+    # 4. Move to the target point.
+    success = chassis.move_to(p.point.x, p.point.y, p.point.z)
+    rospy.loginfo(success)
+    rospy.loginfo("END")

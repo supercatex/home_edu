@@ -8,9 +8,10 @@ import numpy as np
 from cv_bridge import CvBridge
 from sensor_msgs.msg import Image
 from core import Astra as astra
-# from Kobuki import Kobuki as kobuki
+from core import Kobuki as kobuki
 # from pyttsx3 import init
 from core import Speaker as speaker
+import time
 # import os
 
 
@@ -20,6 +21,19 @@ def Recognize_gender(image, model_values):
     gender_preds = gender_net.forward()
     gender = gender_list[gender_preds[0].argmax()]
     return gender
+
+
+def turn_180_degree(chassis):
+    z = chassis.imu.orientation.z
+    print(z)
+    if not abs(z) >= 0.99:
+        if z <= 1:
+            chassis.move(0, 0.3)
+
+        elif z >= 1:
+            chassis.move(0, -0.3)
+    else:
+        return 0
 
 
 # def speak(*args):
@@ -33,6 +47,7 @@ if __name__ == '__main__':
     # face_cascade = cv.CascadeClassifier('/home/mustar/pcms/src/home_edu/scripts/libs/haarcascade_frontalface_default.xml')
 
     # base_path = os.path.abspath("./")
+
     male_count, female_count = 0, 0
 
     MODEL_MEAN_VALUES = (78.4263377603, 87.7689143744, 114.895847746)
@@ -49,14 +64,28 @@ if __name__ == '__main__':
     rate = rospy.Rate(20)
 
     _detector = dlib.get_frontal_face_detector()
+    image_path = "/home/mustar/pcms/src/home_edu/scripts/temp.jpg"
 
     # Init the speaker cam and kobuki
     P = speaker(100)
 
     c = astra("cam2")
-    # chassis = kobuki()
+    chassis = kobuki()
     cv.namedWindow("image")
     cv.setMouseCallback("image", c.mouse_callback)
+
+    while True:
+        a = turn_180_degree(chassis)
+
+        if a == 0:
+            P.say("Hello, may I take a photo of you, chieese")
+            frame = c.rgb_image
+            cv.imshow("frame", frame)
+            cv.waitKey(1)
+            image = cv.resize(frame, (1280, 960))
+            time.sleep(1)
+            cv.imwrite("/home/mustar/pcms/src/home_edu/scripts/temp.jpg", image)
+            break
 
     # if c.rgb_image is None or c.depth_image is None:
     #     continue
