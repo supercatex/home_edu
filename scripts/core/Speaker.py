@@ -4,7 +4,7 @@ import pyttsx3
 
 class Speaker(object):
     
-    def __init__(self, speed=100, volume=1.0, voice_id=16):
+    def __init__(self, speed=130, volume=1.0, voice_id=10):
         self.engine = pyttsx3.init()
         self.set_speed(speed)
         self.set_volume(volume)
@@ -32,7 +32,13 @@ class Speaker(object):
 
 
 if __name__ == "__main__":
+    
     P = Speaker(140, 1.0, 16)
+
+    voices = P.engine.getProperty("voices")
+    for i, v in enumerate(voices):
+        print(i, v.languages, v.name)
+    
     # for i in range(10, 18, 1):
     # 	P.set_voice(10)
     # 	print(i)

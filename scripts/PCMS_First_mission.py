@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+
 import rospy
 # import roslib
 import cv2 as cv
@@ -11,7 +12,10 @@ from core import Astra as astra
 from core import Kobuki as kobuki
 # from pyttsx3 import init
 from core import Speaker as speaker
+import data
 import time
+import speech_recognition as sr
+
 # import os
 
 
@@ -27,13 +31,37 @@ def turn_180_degree(chassis):
     z = chassis.imu.orientation.z
     print(z)
     if not abs(z) >= 0.99:
-        if z <= 1:
+        if z < 1:
             chassis.move(0, 0.3)
 
-        elif z >= 1:
+        elif z > 1:
             chassis.move(0, -0.3)
     else:
         return 0
+
+
+def speech_to_text():
+    with sr.Microphone() as source:
+        audio = r.listen(source)
+    try:
+        text = r.recognize_google(audio, language="en-US")
+        P.say("You said, {}".format(text))
+        return text
+    except Exception as e:
+        P.say("Please say one more time")
+
+    return 0
+
+
+def Answer_question(text):
+    try:
+        for key in data.question.keys():
+            if key in text:
+                return data.question[key]
+
+    except Exception as e:
+        print(e)
+        return "Ask again"
 
 
 # def speak(*args):
@@ -47,8 +75,11 @@ if __name__ == '__main__':
     # face_cascade = cv.CascadeClassifier('/home/mustar/pcms/src/home_edu/scripts/libs/haarcascade_frontalface_default.xml')
 
     # base_path = os.path.abspath("./")
+    time.sleep(4)
 
     male_count, female_count = 0, 0
+
+    r = sr.Recognizer()
 
     MODEL_MEAN_VALUES = (78.4263377603, 87.7689143744, 114.895847746)
     gender_list = ['Male', 'Female']
@@ -67,7 +98,7 @@ if __name__ == '__main__':
     image_path = "/home/mustar/pcms/src/home_edu/scripts/temp.jpg"
 
     # Init the speaker cam and kobuki
-    P = speaker(100)
+    P = speaker()
 
     c = astra("cam2")
     chassis = kobuki()
@@ -78,13 +109,14 @@ if __name__ == '__main__':
         a = turn_180_degree(chassis)
 
         if a == 0:
-            P.say("Hello, may I take a photo of you, chieese")
+            P.say("Hello, may I have your attention please? I am going to take a photo of you, please ready")
+            time.sleep(2)
+            P.say("Please look at my top camera. Ready? 4, 3, 2, 1, say chieese")
             frame = c.rgb_image
-            cv.imshow("frame", frame)
-            cv.waitKey(1)
             image = cv.resize(frame, (1280, 960))
             time.sleep(1)
             cv.imwrite("/home/mustar/pcms/src/home_edu/scripts/temp.jpg", image)
+            P.say("I've just take a photo of you")
             break
 
     # if c.rgb_image is None or c.depth_image is None:
@@ -132,7 +164,7 @@ if __name__ == '__main__':
             color = (255, 0, 0)
             male_count += 1
 
-        elif gender == 'Female':
+        if gender == 'Female':
             female_count += 1
             color = (0, 0, 255)
 
@@ -149,6 +181,18 @@ if __name__ == '__main__':
         # break
     # rate.sleep()
 
-    P.say("I see {} man in this picture and {} women in this picture".format(str(male_count), str(female_count)))
+    P.say("I see {} person, {} man, and {} women in this picture".format(str(face_count), str(male_count), str(female_count)))
 
     cv.destroyAllWindows()
+
+    time.sleep(2)
+
+    P.say("I'm ready")
+    # Question part
+    while not rospy.is_shutdown():
+        Question_count = 0
+        P.say("Please ask")
+
+        operator_question = speech_to_text()
+
+        P.say(Answer_question(operator_question))
