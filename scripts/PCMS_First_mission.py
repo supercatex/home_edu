@@ -19,6 +19,12 @@ import speech_recognition as sr
 # import os
 
 
+def ambient_noice():
+    global r
+    with sr.Microphone() as source:
+        r.adjust_for_ambient_noise(source)
+
+
 def Recognize_gender(image, model_values):
     blob = cv.dnn.blobFromImage(image, 1, (227, 227), model_values, swapRB=False)
     gender_net.setInput(blob)
@@ -41,6 +47,7 @@ def turn_180_degree(chassis):
 
 
 def speech_to_text():
+    global r
     with sr.Microphone() as source:
         audio = r.listen(source)
     try:
@@ -49,8 +56,7 @@ def speech_to_text():
         return text
     except Exception as e:
         P.say("Please say one more time")
-
-    return 0
+        return ""
 
 
 def Answer_question(text):
@@ -148,7 +154,8 @@ if __name__ == '__main__':
         # print(face_img.shape)
         # cv.imshow("face_img", face_img)
         # cv.waitKey(0)
-        face_img = cv.resize(face_img, (227, 227))
+        cv.imshow('frame', face_img)
+        cv.waitKey(1)
         # cv.imshow("face_img", face_img)
         # cv.waitKey(0)
         # blob = cv.dnn.blobFromImage(face_img, 1, (227, 227), MODEL_MEAN_VALUES, swapRB=False)
@@ -160,7 +167,7 @@ if __name__ == '__main__':
         # gender_preds = gender_net.forward()
         # gender = gender_list[gender_preds[0].argmax()]
         gender = Recognize_gender(image, MODEL_MEAN_VALUES)
-        print("Face in picture's gender is {}".format(gender))
+        print("Face in picture's gender is {}".format(face_img))
 
         if gender == 'Male':
             color = (255, 0, 0)
@@ -187,10 +194,10 @@ if __name__ == '__main__':
 
     cv.destroyAllWindows()
 
-    time.sleep(2)
+    ambient_noice()
 
     P.say("I'm ready")
-    Question_count = 0
+    # Question_count = 0
     # Question part
     while not rospy.is_shutdown():
         P.say("Please ask")
@@ -198,8 +205,8 @@ if __name__ == '__main__':
         operator_question = speech_to_text()
 
         P.say(Answer_question(operator_question))
-
-        if Question_count == 5:
-            break
-
-        Question_count += 1
+        #
+        # if Question_count == 5:
+        #     break
+        #
+        # Question_count += 1
