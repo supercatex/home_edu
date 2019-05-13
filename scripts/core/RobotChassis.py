@@ -15,6 +15,7 @@ for building a new map.
 roslaunch turtlebot_bringup minimal.launch
 roslaunch turtlebot_navigation gmapping_demo.launch
 roslaunch turtlebot_rviz_launchers view_navigation.launch
+roslaunch turtlebot_teleop keyboard_teleop.launch
 rosrun map_server map_saver -f /tmp/my_map
 
 loading an exist map.
