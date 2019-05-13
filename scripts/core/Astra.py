@@ -77,7 +77,7 @@ class Astra(object):
 # How to use?
 if __name__ == "__main__":
     rospy.init_node("home_edu_camera", anonymous=True)
-    rate = rospy.Rate(20)
+    rate = rospy.Rate(120)
 
     try:
         # 1. Create an Astra object.
@@ -85,19 +85,24 @@ if __name__ == "__main__":
 
         # 2. Prepare image window and register mouse event handler.
         cv.namedWindow("image")
+        cv.namedWindow("depth")
         cv.setMouseCallback("image", c.mouse_callback)
+        cv.setMouseCallback("depth", c.mouse_callback)
 
         # 3. Main Loop.
         while not rospy.is_shutdown():
-            # 4. Refresh RGB image on the window.
+            
+            # 4. Refresh RGB-D image on the window.
             cv.imshow("image", c.rgb_image)
-
-            # 5. press `q` to break the main loop.
-            if cv.waitKey(1) == ord('q'):
+            cv.imshow("depth", c.depth_image / np.max(c.depth_image))
+            
+            # 5. press `q` or ESC to break the main loop.
+            if cv.waitKey(1) in [ord('q'), 27]:
                 break
 
             # 6. Time cycle control.
             rate.sleep()
+            
     except Exception as e:
         print(e)
     finally:
