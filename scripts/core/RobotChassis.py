@@ -182,14 +182,17 @@ if __name__ == "__main__":
     P = chassis.get_current_pose()
     rospy.loginfo("From %.2f, %.2f, %.2f" % (P[0], P[1], P[2]))
     
+    # 3. Set the target pose at the first time.
     chassis.set_goal_in_rviz()
     G = chassis.get_goal_pose()
     rospy.loginfo("To %.2f, %.2f, %.2f" % (G[0], G[1], G[2]))
     
     while not rospy.is_shutdown():
+        # 4. Get the chassis status.
         code = chassis.status.status_list[-1].status
         text = chassis.status.status_list[-1].text
 
+        # 5. From P to G, then from G to P.
         if code == 1:
             pass
         elif code == 3:
@@ -203,28 +206,7 @@ if __name__ == "__main__":
             rospy.loginfo("To %.2f, %.2f, %.2f" % (G[0], G[1], G[2]))
         else:
             rospy.loginfo("%d, %s" % (code, text))
-        
-        # if code == 7:
-        #     rospy.loginfo("7. Move to %.2f, %.2f, %.2f" % (G[0], G[1], G[2]))
-        #     chassis.move_base.cancel_goal()
-        #     chassis.move_to(G[0], G[1], G[2])
-        # elif code == 4:
-        #     chassis.set_initial_pose_in_rviz()
-        #     chassis.set_goal_in_rviz()
-        #     G = chassis.get_goal_pose()
-        #     rospy.loginfo("4. To %.2f, %.2f, %.2f" % (G[0], G[1], G[2]))
-        # elif code == 3:
-        #     rospy.loginfo("3. Move to %.2f, %.2f, %.2f" % (P[0], P[1], P[2]))
-        #     chassis.move_to(P[0], P[1], P[2])
-        #     P = chassis.get_current_pose()
-        #
+
         rate.sleep()
     
-    # 3. Get a target point from rviz tool.
-    # p = chassis.get_clicked_point()
-    # rospy.loginfo("%.2f, %.2f, %.2f" % (p.point.x, p.point.y, p.point.z))
-    
-    # 4. Move to the target point.
-    # success = chassis.move_to(p.point.x, p.point.y, p.point.z)
-    # rospy.loginfo(success)
     rospy.loginfo("END")
