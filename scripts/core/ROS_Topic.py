@@ -38,3 +38,6 @@ class ROS_Topic_Kobuki(object):
     
     def imu(self):
         return "/%s/sensors/imu_data" % (self.name)
+
+    def core(self):
+        return "/%s/sensors/core" % (self.name)

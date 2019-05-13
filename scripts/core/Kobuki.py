@@ -5,6 +5,7 @@ import rospy
 from ROS_Topic import ROS_Topic_Kobuki as T
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Imu
+from kobuki_msgs.msg import SensorState
 
 '''
 # Default ROS command
@@ -22,6 +23,9 @@ class Kobuki(object):
         
         # IMU data.
         self.imu = None
+        
+        # Core information.
+        self.core = None
         
         # Enable flag.
         self.is_ready = False
@@ -41,9 +45,18 @@ class Kobuki(object):
             queue_size=1
         )
         
+        # Kobuki Core information subscriber.
+        self.core_subscriber = rospy.Subscriber(
+            self.topic.core(),
+            SensorState,
+            self.core_callback,
+            queue_size=1
+        )
+        
         # Waiting callback...
-        rospy.loginfo("Waiting Kobuki IMU topic callback...")
+        rospy.loginfo("Waiting Kobuki topic callback...")
         rospy.wait_for_message(self.topic.imu(), Imu)
+        rospy.wait_for_message(self.topic.core(), SensorState)
         self.is_ready = True
         print("Kobuki (%s) is OK." % self.topic.name)
     
@@ -77,6 +90,10 @@ class Kobuki(object):
     # Kobuki ROS IMU topic callback.
     def imu_callback(self, data):
         self.imu = data
+    
+    # Kobuki ROS core topic callback.
+    def core_callback(self, data):
+        self.core = data
 
 
 # How to use?
@@ -96,7 +113,8 @@ if __name__ == "__main__":
     # chassis.anticlockwise_to(0.6)
     while not rospy.is_shutdown():
         z = chassis.imu.orientation.z
-        print(chassis.imu.orientation)
+        # print(chassis.imu.orientation)
+        print(chassis.core)
         if not abs(z) >= 0.99:
             if z <= 1:
                 chassis.move(0, 0.3)
@@ -105,4 +123,3 @@ if __name__ == "__main__":
                 chassis.move(0, -0.3)
         else:
             break
-
