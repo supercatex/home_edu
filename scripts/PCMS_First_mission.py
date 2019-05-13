@@ -55,6 +55,7 @@ def speech_to_text():
         P.say("You said, {}".format(text))
         return text
     except Exception as e:
+        print(e)
         P.say("Please say one more time")
         return ""
 
@@ -62,7 +63,14 @@ def speech_to_text():
 def Answer_question(text):
     try:
         for key in data.question.keys():
-            if key in text:
+            c = key.split(" ")
+            text = text.lower()
+            found_count = 0
+            for i in c:
+                i = i.lower()
+                if i in text:
+                    found_count += 1
+            if found_count == len(c):
                 return data.question[key]
         return 'Please ask again'
 
@@ -154,8 +162,6 @@ if __name__ == '__main__':
         # print(face_img.shape)
         # cv.imshow("face_img", face_img)
         # cv.waitKey(0)
-        cv.imshow('frame', face_img)
-        cv.waitKey(1)
         # cv.imshow("face_img", face_img)
         # cv.waitKey(0)
         # blob = cv.dnn.blobFromImage(face_img, 1, (227, 227), MODEL_MEAN_VALUES, swapRB=False)
@@ -166,8 +172,8 @@ if __name__ == '__main__':
         # gender_net.setInput(blob)
         # gender_preds = gender_net.forward()
         # gender = gender_list[gender_preds[0].argmax()]
-        gender = Recognize_gender(image, MODEL_MEAN_VALUES)
-        print("Face in picture's gender is {}".format(face_img))
+        gender = Recognize_gender(face_img, MODEL_MEAN_VALUES)
+        print("Face in picture's gender is {}".format(gender))
 
         if gender == 'Male':
             color = (255, 0, 0)
