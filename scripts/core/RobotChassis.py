@@ -46,6 +46,8 @@ class RobotChassis:
         self.last_clicked_point = PointStamped()
         self.last_goal_pose = PoseStamped()
         self.status = GoalStatusArray()
+        self.status_code = 0
+        self.status_text = ""
 
         # Register shutdown event handler.
         rospy.on_shutdown(self.shutdown)
@@ -167,6 +169,8 @@ class RobotChassis:
     
     def status_callback(self, data):
         self.status = data
+        self.status_code = data.status_list[-1].status
+        self.status_text = data.status_list[-1].text
 
 
 # How to use?
@@ -189,18 +193,20 @@ if __name__ == "__main__":
     
     while not rospy.is_shutdown():
         # 4. Get the chassis status.
-        code = chassis.status.status_list[-1].status
-        text = chassis.status.status_list[-1].text
+        code = chassis.status_code
+        text = chassis.status_text
 
         # 5. From P to G, then from G to P.
-        if code == 1:
+        if code == 0:       # No plan.
             pass
-        elif code == 3:
+        elif code == 1:     # Processing.
+            pass
+        elif code == 3:     # Reach point.
             rospy.loginfo("3. Move to %.2f, %.2f, %.2f" % (P[0], P[1], P[2]))
             G = chassis.get_current_pose()
             chassis.move_to(P[0], P[1], P[2])
             P = G
-        elif code == 4:
+        elif code == 4:     # No solution.
             chassis.set_goal_in_rviz()
             G = chassis.get_goal_pose()
             rospy.loginfo("To %.2f, %.2f, %.2f" % (G[0], G[1], G[2]))
