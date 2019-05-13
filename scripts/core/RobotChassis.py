@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 import actionlib
 import rospy
-from geometry_msgs.msg import Pose, PoseWithCovarianceStamped, Point, Quaternion, PointStamped
+from geometry_msgs.msg import Pose, PoseWithCovarianceStamped, Point, Quaternion, PointStamped, PoseStamped
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from tf.transformations import quaternion_from_euler
+from actionlib_msgs.msg import GoalStatusArray
+import time
 
 '''
 for building a new map.
@@ -38,6 +40,9 @@ class RobotChassis:
         self.initial_pose = PoseWithCovarianceStamped()
         self.current_pose = PoseWithCovarianceStamped()
         self.goal = MoveBaseGoal()
+        self.last_clicked_point = PointStamped()
+        self.last_goal_pose = PoseStamped()
+        self.status = GoalStatusArray()
 
         # Register shutdown event handler.
         rospy.on_shutdown(self.shutdown)
@@ -62,19 +67,34 @@ class RobotChassis:
             PointStamped,
             self.clicked_point_callback
         )
+
+        rospy.Subscriber(
+            "/move_base_simple/goal",
+            PoseStamped,
+            self.goal_callback
+        )
+        
+        rospy.Subscriber(
+            "/move_base/status",
+            GoalStatusArray,
+            self.status_callback,
+            queue_size=1
+        )
         
         # Cancel preview goal.
         self.move_base.cancel_goal()
+        rospy.wait_for_message("/amcl_pose", GoalStatusArray)
+        rospy.wait_for_message("/move_base/status", GoalStatusArray)
     
     # Set current pose.
-    def set_initial_pose(self):
+    def set_initial_pose_in_rviz(self):
         self.initial_pose = PoseWithCovarianceStamped()
         rospy.loginfo("Waiting for the robot's initial pose...")
         rospy.wait_for_message("initialpose", PoseWithCovarianceStamped)
         rospy.loginfo("Set initial pose finished.")
         return self.initial_pose.header.stamp != ""
     
-    def get_clicked_point(self):
+    def get_clicked_point_in_rviz(self):
         rospy.loginfo("Waiting for the robot's clicked point...")
         rospy.wait_for_message("/clicked_point", PointStamped)
         rospy.loginfo("Get clicked point (%.2f, %.2f, %.2f)" % (
@@ -83,6 +103,14 @@ class RobotChassis:
             self.last_clicked_point.point.z
         ))
         return self.last_clicked_point
+    
+    def set_goal_in_rviz(self):
+        self.last_goal_pose = PoseStamped()
+        rospy.loginfo("Waiting for the robot's goal...")
+        rospy.wait_for_message('move_base_simple/goal', PoseStamped)
+        rospy.loginfo("Set goal finished.")
+        time.sleep(1)
+        return self.last_goal_pose.header.stamp != ""
     
     @staticmethod
     def point_to_pose(x, y, theta):
@@ -98,6 +126,7 @@ class RobotChassis:
         self.goal.target_pose.header.stamp = rospy.Time.now()
         self.goal.target_pose.pose = location
         self.move_base.send_goal(self.goal)
+        time.sleep(1)
         success = self.move_base.wait_for_result(rospy.Duration(300))
         if success == 1:
             rospy.loginfo("Reached point.")
@@ -120,22 +149,78 @@ class RobotChassis:
     def clicked_point_callback(self, point):
         self.last_clicked_point = point
 
+    def goal_callback(self, pose):
+        self.last_goal_pose = pose
+
+    def get_current_pose(self):
+        point = self.current_pose.pose.pose.position
+        theta = self.current_pose.pose.pose.orientation.z
+        return point.x, point.y, theta
+    
+    def get_goal_pose(self):
+        point = self.last_goal_pose.pose.position
+        theta = self.last_goal_pose.pose.orientation.z
+        return point.x, point.y, theta
+    
+    def status_callback(self, data):
+        self.status = data
+
 
 # How to use?
 if __name__ == "__main__":
     rospy.init_node("home_edu_robot_chassis")
+    rate = rospy.Rate(20)
     
     # 1. Create a RobotChassis object.
     chassis = RobotChassis()
     
     # 2. Set current pose at the first time.
-    chassis.set_initial_pose()
+    chassis.set_initial_pose_in_rviz()
+    P = chassis.get_current_pose()
+    rospy.loginfo("From %.2f, %.2f, %.2f" % (P[0], P[1], P[2]))
+    
+    chassis.set_goal_in_rviz()
+    G = chassis.get_goal_pose()
+    rospy.loginfo("To %.2f, %.2f, %.2f" % (G[0], G[1], G[2]))
+    
+    while not rospy.is_shutdown():
+        code = chassis.status.status_list[-1].status
+        text = chassis.status.status_list[-1].text
+
+        if code == 1:
+            pass
+        elif code == 3:
+            rospy.loginfo("3. Move to %.2f, %.2f, %.2f" % (P[0], P[1], P[2]))
+            chassis.move_to(P[0], P[1], P[2])
+            P = chassis.get_current_pose()
+        elif code == 4:
+            chassis.set_goal_in_rviz()
+            G = chassis.get_goal_pose()
+            rospy.loginfo("To %.2f, %.2f, %.2f" % (G[0], G[1], G[2]))
+        else:
+            rospy.loginfo("%d, %s" % (code, text))
+        
+        # if code == 7:
+        #     rospy.loginfo("7. Move to %.2f, %.2f, %.2f" % (G[0], G[1], G[2]))
+        #     chassis.move_base.cancel_goal()
+        #     chassis.move_to(G[0], G[1], G[2])
+        # elif code == 4:
+        #     chassis.set_initial_pose_in_rviz()
+        #     chassis.set_goal_in_rviz()
+        #     G = chassis.get_goal_pose()
+        #     rospy.loginfo("4. To %.2f, %.2f, %.2f" % (G[0], G[1], G[2]))
+        # elif code == 3:
+        #     rospy.loginfo("3. Move to %.2f, %.2f, %.2f" % (P[0], P[1], P[2]))
+        #     chassis.move_to(P[0], P[1], P[2])
+        #     P = chassis.get_current_pose()
+        #
+        rate.sleep()
     
     # 3. Get a target point from rviz tool.
-    p = chassis.get_clicked_point()
-    rospy.loginfo("%.2f, %.2f, %.2f" % (p.point.x, p.point.y, p.point.z))
+    # p = chassis.get_clicked_point()
+    # rospy.loginfo("%.2f, %.2f, %.2f" % (p.point.x, p.point.y, p.point.z))
     
     # 4. Move to the target point.
-    success = chassis.move_to(p.point.x, p.point.y, p.point.z)
-    rospy.loginfo(success)
+    # success = chassis.move_to(p.point.x, p.point.y, p.point.z)
+    # rospy.loginfo(success)
     rospy.loginfo("END")
