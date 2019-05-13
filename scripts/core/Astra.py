@@ -77,7 +77,7 @@ class Astra(object):
 # How to use?
 if __name__ == "__main__":
     rospy.init_node("home_edu_camera", anonymous=True)
-    rate = rospy.Rate(120)
+    rate = rospy.Rate(20)
 
     try:
         # 1. Create an Astra object.
