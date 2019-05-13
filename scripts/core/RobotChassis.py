@@ -8,6 +8,9 @@ from actionlib_msgs.msg import GoalStatusArray
 import time
 
 '''
+$(find turtlebot_bringup)/launch/includes/3dsensor/astra.launch.xml
+export ASTRA_SCANNER_DEVICE_ID="..."
+
 for building a new map.
 roslaunch turtlebot_bringup minimal.launch
 roslaunch turtlebot_navigation gmapping_demo.launch
@@ -191,8 +194,9 @@ if __name__ == "__main__":
             pass
         elif code == 3:
             rospy.loginfo("3. Move to %.2f, %.2f, %.2f" % (P[0], P[1], P[2]))
+            G = chassis.get_current_pose()
             chassis.move_to(P[0], P[1], P[2])
-            P = chassis.get_current_pose()
+            P = G
         elif code == 4:
             chassis.set_goal_in_rviz()
             G = chassis.get_goal_pose()
