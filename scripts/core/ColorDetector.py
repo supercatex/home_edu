@@ -64,7 +64,12 @@ if __name__ == "__main__":
                 depth = camera.depth_image[max(cy-e, 0):min(cy+e, h), max(cx-e, 0):min(cx+e, w)].copy()
                 index = np.nonzero(depth)
                 if len(index[0]) > 0:
-                    print(np.min(depth[index]))
+                    d = np.min(depth[index])
+                    rospy.loginfo("%d mm" % (d))
+                    cv.putText(rgb_image, str(d / 10) + "cm", (cx + 20, cy),
+                               cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2,
+                               cv.LINE_AA
+                    )
                     flag = True
                 else:
                     e = e + 1
