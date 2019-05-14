@@ -2,6 +2,8 @@
 
 import rospy
 import time
+import cv2 as cv
+import numpy as np
 #import FollowMe as follow
 from core import Manipulator as mani
 from core import Kobuki as kobuki
@@ -10,27 +12,23 @@ from core import Speech2Text as speech2text
 from core import Astra as astra
 
 def depth_detect(frame):
-	array()
-	try:
-		'''
-		image = frame[400 : 880, 400 : 560]
+	image = frame[100:540, 100:380].copy()
 
-		for i in range len(image):
-			array.append(i)
-		for b in range len(array):
-			if b == 0:
-				return False
-			elif b <= 1000 and b >= 500:
-				return True
-			else:
-				return False
-		'''
-		depth = frame[1280/2, 960/2]
-		print(depth)
-	except EOFError:
-		print("frame is none")
-		
-	return False
+	index = image[np.nonzero(image)]
+	
+	if index is None:
+		return False
+	else:
+		min = np.min(index)
+	print(min)
+
+	if min <= 900 and min >= 500:
+		return True
+	else:
+		return False
+
+	#except Exception:
+	#print("frame is none")
 
 if __name__ == '__main__':
 	rospy.init_node("home_edu_camera", anonymous=True)
@@ -39,17 +37,17 @@ if __name__ == '__main__':
 	print("boot")
 	#time.sleep(1)
 	#s.say("hello, I'm your assistant")
-	c = astra("cam1")
+	c = astra("cam2")
 	print("ok")
 	while True:
 		#frame = c.rgb_image
 		image = c.depth_image
-		image = cv.resize(image, (1280, 960))
 		status = depth_detect(image)
 		if status == False:
 			continue
 		else:
-			pass
+			print("ok")
+			break
 		
 	time.sleep(1)
 	s.say("please stand in front of me")
