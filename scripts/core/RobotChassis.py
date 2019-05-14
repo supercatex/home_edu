@@ -9,7 +9,8 @@ import time
 
 '''
 $(find turtlebot_bringup)/launch/includes/3dsensor/astra.launch.xml
-export ASTRA_SCANNER_DEVICE_ID="..."
+export ASTRA_DEVICE_ID_UP="..."
+export ASTRA_DEVICE_ID_DOWN="..."
 
 for building a new map.
 roslaunch turtlebot_bringup minimal.launch
