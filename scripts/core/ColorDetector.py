@@ -56,6 +56,19 @@ if __name__ == "__main__":
             cv.drawContours(rgb_image, [cnts[0]], 0, (0, 255, 0), 2)
             cx, cy = detector.find_center(cnts[0])
             cv.circle(rgb_image, (cx, cy), 5, (0, 0, 255), -1)
+
+            h, w = camera.depth_image.shape[0:2]
+            flag = False
+            e = 0
+            while not flag and e < 25:
+                depth = camera.depth_image[max(cy-e, 0):min(cy+e, h), max(cx-e, 0):min(cx+e, w)].copy()
+                index = np.nonzero(depth)
+                if len(index[0]) > 0:
+                    print(np.min(depth[index]))
+                    flag = True
+                else:
+                    e = e + 1
+            # cv.imshow("depth", camera.depth_image)
         cv.imshow("image", rgb_image)
         if cv.waitKey(1) in [ord('q'), 27]:
             break
