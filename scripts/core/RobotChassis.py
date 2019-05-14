@@ -17,7 +17,7 @@ roslaunch turtlebot_bringup minimal.launch
 roslaunch turtlebot_navigation gmapping_demo.launch
 roslaunch turtlebot_rviz_launchers view_navigation.launch
 roslaunch turtlebot_teleop keyboard_teleop.launch
-rosrun map_server map_saver -f /tmp/my_map
+rosrun map_server map_saver -f /tmp/my_mapros
 
 loading an exist map.
 export TURTLEBOT_MAP_FILE=/tmp/my_map.yaml
@@ -171,8 +171,9 @@ class RobotChassis:
     
     def status_callback(self, data):
         self.status = data
-        self.status_code = data.status_list[-1].status
-        self.status_text = data.status_list[-1].text
+        if len(data.status_list) > 0:
+            self.status_code = data.status_list[-1].status
+            self.status_text = data.status_list[-1].text
 
 
 # How to use?

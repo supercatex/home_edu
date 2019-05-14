@@ -122,8 +122,8 @@ if __name__ == '__main__':
     cv.setMouseCallback("image", c.mouse_callback)
 
     while True:
-        a = turn_180_degree(chassis)
-
+        #a = turn_180_degree(chassis)
+        a = 0
         if a == 0:
             P.say("Hello, may I have your attention please? I am going to take a photo for you, please ready")
             time.sleep(2)
