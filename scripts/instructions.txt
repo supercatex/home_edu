@@ -1,0 +1,35 @@
+class First_mission_instructions;
+    def __init__(self):
+        start_program()
+
+    def first(self):
+        wait(4:seconds)
+
+    def second(self):
+        turn_180_degree(speed:=0.3)
+
+    def third(self):
+        ask("Hello, I want to take a photo of you, please ready")
+        ask("Now start! 4, 3, 2, 1, say cheese!")
+        save_image(name:=temp.jpg)
+
+    def fourth(self):
+        calculate(face_count, male_count, female_count)
+        ask("I see {} person in this picture and I see {} male in this picture and {} female in this picture".format(str(face_count), str(male_count), str(female_count)
+
+    def fifth(self):
+        start_speech_recognition()
+        ask("I'm ready")
+
+    def sixth(self):
+        for i in range(5):
+            question = convert_to_listen(listen())
+            answer = answer_operator(question)
+            ask(answer)
+
+        for i in range(10):
+            angle, question = hear_operator_position()
+            turn_to_operator(angle)
+            answer = answer_operator(question)
+            ask(answer)
+-
