@@ -3,6 +3,7 @@ import rospy
 import cv2 as cv
 import numpy as np
 from Astra import Astra
+import math
 
 
 class ColorDetector(object):
@@ -41,6 +42,37 @@ class ColorDetector(object):
             return x, y
         return 0, 0
 
+    def physical_distance(self, depth_image, x, y, max_range=25):
+        real_x = 0
+        real_y = 0
+        real_z = 0
+        
+        h, w = depth_image.shape
+        flag = False
+        e = 0
+        while not flag and e < max_range:
+            depth = depth_image[max(cy - e, 0):min(cy + e, h), max(cx - e, 0):min(cx + e, w)].copy()
+            indices = np.nonzero(depth)
+            if len(indices[0]) > 0:
+                real_z = np.min(depth[indices])
+                flag = True
+            else:
+                e = e + 1
+        
+        FOV_H = 60.0
+        d = real_z
+        lw = d * math.tan(FOV_H / 2 * math.pi / 180)
+        lx = float(x) / w * lw * 2 - w / 2
+        real_x = lx
+        
+        FOV_V = 49.5
+        d = real_z
+        lh = d * math.tan(FOV_V / 2 * math.pi / 180)
+        ly = float(y) / h * lh * 2 - h / 2
+        real_y = ly
+                
+        return real_x, real_y, real_z
+    
 
 if __name__ == "__main__":
     rospy.init_node("home_edu_camera", anonymous=True)
@@ -57,22 +89,12 @@ if __name__ == "__main__":
             cx, cy = detector.find_center(cnts[0])
             cv.circle(rgb_image, (cx, cy), 5, (0, 0, 255), -1)
 
-            h, w = camera.depth_image.shape[0:2]
-            flag = False
-            e = 0
-            while not flag and e < 25:
-                depth = camera.depth_image[max(cy-e, 0):min(cy+e, h), max(cx-e, 0):min(cx+e, w)].copy()
-                index = np.nonzero(depth)
-                if len(index[0]) > 0:
-                    d = np.min(depth[index])
-                    rospy.loginfo("%d mm" % (d))
-                    cv.putText(rgb_image, str(d / 10) + "cm", (cx + 20, cy),
-                               cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2,
-                               cv.LINE_AA
-                    )
-                    flag = True
-                else:
-                    e = e + 1
+            rx, ry, rz = detector.physical_distance(camera.depth_image, cx, cy)
+            rospy.loginfo("%.1f mm, %.1f mm, %.1f mm" % (rx, ry, rz))
+            cv.putText(rgb_image, "%.1fmm, %.1fmm, %.1fmm" % (rx/10, ry/10, rz/10), (cx + 20, cy),
+                       cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2,
+                       cv.LINE_AA
+            )
             # cv.imshow("depth", camera.depth_image)
         cv.imshow("image", rgb_image)
         if cv.waitKey(1) in [ord('q'), 27]:
