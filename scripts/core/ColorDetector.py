@@ -4,6 +4,7 @@ import cv2 as cv
 import numpy as np
 from Astra import Astra
 import math
+from Manipulator import Manipulator
 
 
 class ColorDetector(object):
@@ -42,7 +43,9 @@ class ColorDetector(object):
             return x, y
         return 0, 0
 
-    def physical_distance(self, depth_image, x, y, max_range=25):
+    def physical_distance(self, depth_image, x, y, angle=0, max_range=25):
+        radian = float(angle) * math.pi / 180
+        
         real_x = 0
         real_y = 0
         real_z = 0
@@ -70,6 +73,10 @@ class ColorDetector(object):
         lh = d * math.tan(FOV_V / 2 * math.pi / 180)
         ly = float(y) / h * lh * 2 - h / 2
         real_y = ly
+        
+        real_x = real_x
+        real_y = real_y + real_z * math.sin(radian)
+        real_z = real_z * math.cos(radian)
                 
         return real_x, real_y, real_z
     
@@ -79,7 +86,9 @@ if __name__ == "__main__":
     rate = rospy.Rate(20)
     
     camera = Astra()
+    arm = Manipulator()
     detector = ColorDetector((50, 16, 16), (80, 255, 255))
+    key = 0
     while not rospy.is_shutdown():
         rgb_image = camera.rgb_image
         mask = detector.get_mask(rgb_image)
@@ -89,13 +98,36 @@ if __name__ == "__main__":
             cx, cy = detector.find_center(cnts[0])
             cv.circle(rgb_image, (cx, cy), 5, (0, 0, 255), -1)
 
-            rx, ry, rz = detector.physical_distance(camera.depth_image, cx, cy)
-            rospy.loginfo("%.1f mm, %.1f mm, %.1f mm" % (rx, ry, rz))
-            cv.putText(rgb_image, "%.1fmm, %.1fmm, %.1fmm" % (rx/10, ry/10, rz/10), (cx + 20, cy),
-                       cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2,
+            rx, ry, rz = detector.physical_distance(camera.depth_image, cx, cy, 30)
+            # rospy.loginfo("%.1f mm, %.1f mm, %.1f mm" % (rx, ry, rz))
+            cv.putText(rgb_image, "%.1fcm, %.1fcm, %.1fcm" % (rx/10, ry/10, rz/10),
+                       (cx + 20, cy),
+                       cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 2,
                        cv.LINE_AA
             )
+            
+            if key == 32:
+                ay = -(ry / 10 - 40.5)
+                az = -rx / 10
+                ax = rz / 10 - 18 + 6 * math.cos(math.atan2(rx, rz)) * (-rx/abs(rx))
+                arm.exec_servos_pos(7, 10, 0, mode=2)
+                arm.open()
+                arm.wait()
+                arm.exec_servos_pos(ax, ay, az, 0, mode=1)
+                arm.wait()
+                arm.close(30)
+                arm.wait()
+                arm.exec_servos_pos(7, 15, 0)
+                arm.wait()
+                arm.exec_servos_pos(ax, ay, az, -15)
+                arm.wait()
+                arm.open()
+                arm.wait()
+                arm.exec_servos_pos(7, 10, 0, mode=2)
+                arm.wait()
+                
             # cv.imshow("depth", camera.depth_image)
         cv.imshow("image", rgb_image)
-        if cv.waitKey(1) in [ord('q'), 27]:
+        key = cv.waitKey(1)
+        if key in [ord('q'), 27]:
             break

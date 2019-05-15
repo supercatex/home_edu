@@ -16,6 +16,7 @@ class Manipulator(object):
     
     # Two ARM is same length.
     ARM_LENGTH = 10.5
+    HAND_LENGTH = 13
     MAX_SPEED = 1.0
     
     def __init__(self):
@@ -45,18 +46,7 @@ class Manipulator(object):
         self.wait()
         print("Manipulator is ready.")
     
-    # Execute servos position.
-    def exec_servos_pos(self, x, y, z, w=0):
-        
-        # Safety checking.
-        if math.sqrt(x * x + y * y + z * z) > Manipulator.ARM_LENGTH * 2:
-            print("Cannot move to point(%.2f, %.2f, %.2f)" % (x, y, z))
-            return
-        
-        if self.target_x == x and self.target_y == y and self.target_z == z and self.target_w == w:
-            print("Same poisition point(%.2f, %.2f, %.2f)" % (x, y, z))
-            return
-        
+    def calc_servos_pos(self, x, y, z, w=0):
         # Calculation.
         alpha = [0, 0, 0, 0]
         t = 0
@@ -65,37 +55,79 @@ class Manipulator(object):
         x = math.sqrt(x * x + z * z) * t
         if x != 0:
             alpha[0] = math.asin(z / x)
-        
+    
         L1 = Manipulator.ARM_LENGTH
         L2 = Manipulator.ARM_LENGTH
         L1_2 = L1 * L1
         L2_2 = L2 * L2
         L3_2 = x * x + y * y
-        
+    
         theta1 = 0
         if L3_2 != 0:
             theta1 = math.acos((L1_2 + L3_2 - L2_2) / (2 * L1 * math.sqrt(L3_2)))
         alpha[1] = math.pi / 2 - theta1 - math.atan2(y, x)
-        
+    
         theta2 = 0
         theta2 = math.acos((L1_2 + L2_2 - L3_2) / (2 * L1 * L2))
         alpha[2] = math.pi - theta2
-        
+    
         alpha[3] = math.pi / 2 - alpha[1] - alpha[2] + w * math.pi / 180
-        
+    
         delta_list = []
         for i in range(len(alpha)):
             delta_list.append(abs(alpha[i] - self.servos[i].state.current_pos))
         max_delta = np.max(delta_list)
+        delta_list = delta_list / max_delta
+        return alpha, delta_list
+    
+    # Execute servos position.
+    def exec_servos_pos(self, x, y, z, w=0, mode=0):
         
-        # Execute.
-        for i in range(len(alpha)):
-            self.servos[i].set_speed(Manipulator.MAX_SPEED * delta_list[i] / max_delta)
-            self.servos[i].set_radian(alpha[i])
-        self.target_x = x
-        self.target_y = y
-        self.target_z = z
-        self.target_w = w
+        # Safety checking.
+        if math.sqrt(x * x + y * y + z * z) > Manipulator.ARM_LENGTH * 2 + Manipulator.HAND_LENGTH:
+            print("Cannot move to point(%.2f, %.2f, %.2f)" % (x, y, z))
+            return
+        
+        if self.target_x == x and self.target_y == y and self.target_z == z and self.target_w == w:
+            print("Same poisition point(%.2f, %.2f, %.2f)" % (x, y, z))
+            return
+        
+        try:
+            alpha, delta_list = self.calc_servos_pos2(x, y, z, w, mode)
+        
+            # Execute.
+            for i in range(len(alpha)):
+                self.servos[i].set_speed(Manipulator.MAX_SPEED * delta_list[i])
+                self.servos[i].set_radian(alpha[i])
+            self.target_x = x
+            self.target_y = y
+            self.target_z = z
+            self.target_w = w
+        except Exception as e:
+            print(e)
+    
+    def calc_servos_pos2(self, x, y, z, w=0, mode=0):
+        
+        print("Goto:", x, y, z)
+        a = float(w) * math.pi / 180
+        new_x = x - Manipulator.HAND_LENGTH * math.cos(a)
+        new_y = y - Manipulator.HAND_LENGTH * math.sin(a)
+        new_z = 0
+        
+        alpha, delta_list = self.calc_servos_pos(new_x, new_y, new_z, w)
+        print("Calc1:", new_x, new_y, new_z, alpha[0])
+
+        b = math.atan2(z, x)
+        new_z = z - Manipulator.HAND_LENGTH * math.sin(b)
+        alpha, delta_list = self.calc_servos_pos(new_x, new_y, new_z, w)
+        print("Calc2:", new_x, new_y, new_z, alpha[0])
+        
+        if mode == 1:   # Rotate first
+            delta_list[0] = Manipulator.MAX_SPEED
+        elif mode == 2: # Rotate last
+            delta_list[0] = np.min(delta_list)
+        
+        return alpha, delta_list
     
     # Arm is moving or not.
     def is_moving(self):
