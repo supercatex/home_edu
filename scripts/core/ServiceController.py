@@ -20,7 +20,7 @@ class ServiceController(object):
         }
         
     def send_message(self, key, msg):
-        rospy.wait_for_service(self.items[key])
+        rospy.wait_for_service(self.items[key]["service_name"])
         service_proxy = self.items[key]["service_proxy"]
         return service_proxy(msg)
 

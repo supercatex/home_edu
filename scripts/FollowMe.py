@@ -9,10 +9,10 @@ import thread
 from threading import Thread
 
 
-class follower_control(object):
-	self.command = 'r'
+class FollowMe(object):
+    command = 'r'
     def __init__(self, command):
-		self.command = command
+        self.command = command
         rospy.init_node("follower_control")
         self.keyboard_control()
 
@@ -40,4 +40,4 @@ class follower_control(object):
 
 
 if __name__ == "__main__":
-    follower_control(f)
+    FollowMe(f)
