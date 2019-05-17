@@ -112,11 +112,17 @@ if __name__ == '__main__':
 			print(goal[i][0], goal[i][1], goal[i][2])
 			chassis.move_to(goal[i][0], goal[i][1], goal[i][2])
 			s.say("arrived to goal")
+			m.open()
+			s.say("please take the bag")
 			break
-	
-	while True:
-		
-	
+
+		while True:
+			time.sleep(1)
+			s.say("please follow me to the garage")
+			chassis.move_to(x, y, z)
+			s.say("arrived to the garage")
+			break
+
 	print("end of program")
 
 
