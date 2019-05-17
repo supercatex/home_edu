@@ -31,12 +31,19 @@ class FacialDisplay(object):
             "%s/%s/%s.png" % (self.dir, self.path, self.name),
             cv.IMREAD_UNCHANGED
         )
+        bg = cv.imread(
+            "%s/%s/%s.jpg" % (self.dir, self.path, "1"),
+            cv.IMREAD_COLOR
+        )
         h, w, c = img.shape
         fw = 960
         fh = 600
-        frame = np.zeros((fh, fw, c), dtype="uint8")
+        frame = np.zeros((fh, fw, 3), dtype="uint8")
+        
+        frame = cv.resize(bg, (fw, fh))
+        
         ox = int((fw - w) / 2)
-        oy = 0
+        oy = 10
         for i in range(min(c, 3)):
             if c <= 3:
                 frame[oy:oy+h, ox:ox+w, i] = img[:, :, i]
@@ -46,20 +53,28 @@ class FacialDisplay(object):
                 frame[oy:oy + h, ox:ox + w, i] = c1 + c2
 
         cv.putText(
-            frame, "Press 'q' or 'Esc' to quit.", (740, 20),
+            frame, "Press 'q' or 'Esc' to quit.", (740, 30),
             cv.FONT_HERSHEY_SIMPLEX,
             0.5, (255, 255, 255), 1,
             cv.LINE_AA
         )
+
+        cv.putText(
+            frame, "Icon designed by Roundicons from Flaticon", (700, 10),
+            cv.FONT_HERSHEY_SIMPLEX,
+            0.35, (150, 150, 150), 1,
+            cv.LINE_AA
+        )
         
-        size = 1
-        if len(message) >= 55 and len(message) <= 110:
+        if len(message) < 60:
+            size = 1
+        elif len(message) < 120:
             size = 0.5
-        elif len(message) > 110:
-            size = 0.3
+        else:
+            size = 0.35
         
         cv.putText(
-            frame, message, (20, oy + h + 50),
+            frame, message, (5, oy + h + 50),
             cv.FONT_HERSHEY_SIMPLEX,
             size, (255, 255, 255), 1,
             cv.LINE_AA

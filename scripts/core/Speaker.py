@@ -35,7 +35,7 @@ class Speaker(object):
         else:
             print("No voice id: ", voice_id)
     
-    def say(self, msg, facial_start="happy-1", facial_end="happy"):
+    def say(self, msg, facial_start="happy-2", facial_end="happy"):
         print(msg)
         cmd = facial_start + ":" + msg
         self.publisher.publish(cmd)
@@ -50,23 +50,12 @@ if __name__ == "__main__":
     rospy.init_node("home_edu_speaker", anonymous=True)
     P = Speaker(140, 1.0, 16)
 
-    voices = P.engine.getProperty("voices")
-    for i, v in enumerate(voices):
-        print(i, v.languages, v.name)
-    
-    P.say("Hi, nice to meet you.")
-    time.sleep(1)
-    P.say("I am angry now!", facial_start="angry", facial_end="angry-1")
-    time.sleep(1)
-    P.say("I am fine. thank you.", facial_start="happy-1", facial_end="happy")
-    time.sleep(1)
-    P.say("Good afternoon, what's your name?", facial_start="happy-2", facial_end="happy")
-    time.sleep(1)
-    P.say("Good afternoon, what's your name, I am raspberry pi.")
-    time.sleep(1)
-    # for i in range(10, 18, 1):
-    # 	P.set_voice(10)
-    # 	print(i)
-    # P.say("I see 1 man in this picture and 2 women in this picture.")
-    P.say("Good afternoon, what's your name? I am raspberry pi. I am your best mini computer that can do a lot of things.")
-# 2, 9, 10, 11, 14, 15, 17, 22
+    while not rospy.is_shutdown():
+        P.say("Hi, nice to meet you.")
+        time.sleep(1)
+        P.say("I am PCMS home service robot.", "happy-1")
+        time.sleep(1)
+        P.say("Service robots assist human beings, typically by performing a job that is dirty, dull, distant, dangerous or repetitive, including household chores.", "smart")
+        time.sleep(1)
+        P.say("And I am your home assistant.")
+        time.sleep(10)
