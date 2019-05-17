@@ -90,8 +90,11 @@ class RobotChassis:
         
         # Cancel preview goal.
         self.move_base.cancel_goal()
+        rospy.loginfo("waiting for /amcl_pose")
         rospy.wait_for_message("/amcl_pose", GoalStatusArray)
+        rospy.loginfo("waiting for /move_base/status")
         rospy.wait_for_message("/move_base/status", GoalStatusArray)
+        rospy.loginfo("RoboChassis OK")
     
     # Set current pose.
     def set_initial_pose_in_rviz(self):

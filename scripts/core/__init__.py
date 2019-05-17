@@ -10,3 +10,4 @@ from .RobotArm import RobotArm
 from .ServiceController import ServiceController
 from .Speaker import Speaker
 from .Speech2Text import Speech2Text
+from .GenderDetection import GenderDetection

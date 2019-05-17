@@ -9,7 +9,7 @@ from std_msgs.msg import String
 class FacialDisplay(object):
     
     def __init__(self, path="emoji", name="happy", fullscreen=False):
-        self.dir = os.path.dirname(os.path.realpath(__file__))
+        self.dir = os.path.dirname(os.path.abspath(__file__))
         self.path = path
         self.name = name
         self.fullscreen = fullscreen

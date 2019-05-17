@@ -87,6 +87,7 @@ def Answer_question(text):
 #
 
 if __name__ == '__main__':
+    rospy.init_node('Home_first_mission', anonymous=True)
     # face_cascade = cv.CascadeClassifier('/home/mustar/pcms/src/home_edu/scripts/libs/haarcascade_frontalface_default.xml')
 
     # Init the speaker cam and kobuki
@@ -109,7 +110,6 @@ if __name__ == '__main__':
         '/home/mustar/pcms/src/home_edu/scripts/libs/gender_net.caffemodel'
     )
 
-    rospy.init_node('Home_first_mission', anonymous=True)
 
     rate = rospy.Rate(20)
 

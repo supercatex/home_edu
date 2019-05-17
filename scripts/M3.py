@@ -79,8 +79,6 @@ class M3(Manipulator):
 			self.servos[i].set_speed(M3.MAX_SPEED * delta_list[i] / max_delta)
 			self.servos[i].set_radian(alpha[i])
 
-		print(x, y, z, w)
-		print(alpha)
 
 if __name__ == "__main__":
 	rospy.init_node("home_edu_arm", anonymous=True)
