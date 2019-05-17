@@ -43,7 +43,7 @@ class Speaker(object):
         self.engine.say(msg)
         self.engine.runAndWait()
         
-        cmd = f1 + ":"
+        cmd = f2 + ":"
         if keep_message:
             cmd = cmd + msg
         self.publisher.publish(cmd)
