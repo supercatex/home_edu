@@ -35,15 +35,18 @@ class Speaker(object):
         else:
             print("No voice id: ", voice_id)
     
-    def say(self, msg, facial_start="happy-2", facial_end="happy"):
+    def say(self, msg, f1="happy-2", f2="happy", keep_message=True):
         print(msg)
-        cmd = facial_start + ":" + msg
+        cmd = f1 + ":" + msg
         self.publisher.publish(cmd)
         
         self.engine.say(msg)
         self.engine.runAndWait()
         
-        self.publisher.publish(facial_end + ":")
+        cmd = f1 + ":"
+        if keep_message:
+            cmd = cmd + msg
+        self.publisher.publish(cmd)
 
 
 if __name__ == "__main__":
