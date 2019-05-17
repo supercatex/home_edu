@@ -10,8 +10,8 @@ from Astra import Astra as astra
 
 class GenderDetection(object):
     def __init__(self, gender_lib_prototxt="../libs/deploy_gender.prototxt", gender_lib_model="../libs/gender_net.caffemodel"):
-        self.gender_lib_prototxt = os.path.abspath(gender_lib_prototxt)
-        self.gender_lib_model = os.path.abspath(gender_lib_model)
+        self.gender_lib_prototxt = gender_lib_prototxt
+        self.gender_lib_model = gender_lib_model
         self.MODEL_MEAN_VALUES = (78.4263377603, 87.7689143744, 114.895847746)
         self.gender_list = ['male', 'female']
         self.gender_net = cv.dnn.readNetFromCaffe(
@@ -49,7 +49,7 @@ if __name__ == '__main__':
     rate = rospy.Rate(20)
 
     c = astra()
-    g = GenderDetection()
+    g = GenderDetection("/home/mustar/pcms/src/home_edu/scripts/libs/deploy_gender.prototxt", "/home/mustar/pcms/src/home_edu/scripts/libs/gender_net.caffemodel")
 
     while not rospy.is_shutdown():
         frame = c.rgb_image

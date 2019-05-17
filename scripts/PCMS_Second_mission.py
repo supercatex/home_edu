@@ -13,6 +13,7 @@ from core import Speech2Text as speech2text
 from core import Astra as astra
 from core import ServiceController as follow
 from turtlebot_msgs.srv import SetFollowState
+from core import GenderDetection as Gender
 from core import Manipulator as manipulator
 
 def depth_detect(frame):
@@ -42,10 +43,11 @@ if __name__ == '__main__':
 	s = speaker()
 	print("started")
 	s.say("hello, I'm your assistant")
+	'''
 	t = speech2text()
 	t.ambient_noise()
 	chassis = chassis()
-	'''
+	
 	c = astra("cam_top")
 	f = follow()
 	f.register(
@@ -66,6 +68,7 @@ if __name__ == '__main__':
 	
 	time.sleep(1)
 	s.say("please stand still and say follow me")
+	'''
 	'''
 	m = manipulator()
 	
@@ -115,14 +118,50 @@ if __name__ == '__main__':
 			m.open()
 			s.say("please take the bag")
 			break
-
+		
 		while True:
 			time.sleep(1)
 			s.say("please follow me to the garage")
 			chassis.move_to(x, y, z)
 			s.say("arrived to the garage")
 			break
-
+'''
+	k = kobuki()
+	g = Gender("/home/mustar/pcms/src/home_edu/scripts/libs/deploy_gender.prototxt", "/home/mustar/pcms/src/home_edu/scripts/libs/gender_net.caffemodel")
+	
+	cam = astra("camera")
+	
+	while not rospy.is_shutdown():
+		frame = cam.rgb_image
+		position = g.detect_face(frame)
+		if len(position) == 0:
+			print('moving')
+			k.move(0, 0.3)
+			cv.imshow("frame", frame)
+		else:
+			p1 = position[0]
+			x_val = (p1[2] - p1[0]) / 2 + p1[0]
+			print(x_val, frame.shape)
+			if x_val < 300:
+				k.move(0, 0.3)
+			elif x_val > 340:
+				k.move(0, -0.3)
+			else:
+				break
+		'''
+			for x1, y1, x2, y2 in position:
+				x_val = (x2 - x1) / 2 + x1
+				cv.imshow('frame', frame)
+				if x_val >= 360:
+					k.move(0, 0.2)
+				elif x_val <= 280:
+					k.move(0, 0.2)
+				elif 360 < x_val > 280:
+					k.move(0, 0)
+					time.sleep(5)
+					break
+		'''
+		cv.waitKey(1)
 	print("end of program")
 
 
