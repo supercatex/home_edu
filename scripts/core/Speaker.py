@@ -35,7 +35,7 @@ class Speaker(object):
         else:
             print("No voice id: ", voice_id)
     
-    def say(self, msg, f1="happy-2", f2="happy", keep_message=True):
+    def say(self, msg, f1="happy-2", f2="happy", keep_message=False):
         print(msg)
         cmd = f1 + ":" + msg
         self.publisher.publish(cmd)
