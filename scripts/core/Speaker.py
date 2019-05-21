@@ -3,6 +3,7 @@ import pyttsx3
 import rospy
 from std_msgs.msg import String
 import time
+from Speech2Text import Speech2Text
 
 
 class Speaker(object):
@@ -52,13 +53,35 @@ class Speaker(object):
 if __name__ == "__main__":
     rospy.init_node("home_edu_speaker", anonymous=True)
     P = Speaker(140, 1.0, 16)
-
-    while not rospy.is_shutdown():
-        P.say("Hi, nice to meet you.")
-        time.sleep(1)
-        P.say("I am PCMS home service robot.", "happy-1")
-        time.sleep(1)
-        P.say("Service robots assist human beings, typically by performing a job that is dirty, dull, distant, dangerous or repetitive, including household chores.", "smart")
-        time.sleep(1)
-        P.say("And I am your home assistant.")
-        time.sleep(10)
+    
+    s = Speech2Text()
+    s.ambient_noise()
+    P.say("Hello, I am ready.")
+    while True:
+        print("ready")
+        t = s.listen()
+        print(t)
+        if t == "goodbye":
+            break
+        if t.find("introduce") >= 0:
+            P.say("Hi, nice to meet you.")
+            time.sleep(1)
+            P.say("I am PCMS home service robot.", "happy-1")
+            time.sleep(1)
+            P.say("Service robots assist people by doing household chores.", "smart")
+            time.sleep(1)
+            P.say("And I am your home assistant.")
+        if t.find("thank") >= 0:
+            P.say("this is my pleasure", "happy-2")
+    print("bye-bye")
+    P.say("bye-bye")
+    
+    # while not rospy.is_shutdown():
+    #     P.say("Hi, nice to meet you.")
+    #     time.sleep(1)
+    #     P.say("I am PCMS home service robot.", "happy-1")
+    #     time.sleep(1)
+    #     P.say("Service robots assist human beings, typically by performing a job that is dirty, dull, distant, dangerous or repetitive, including household chores.", "smart")
+    #     time.sleep(1)
+    #     P.say("And I am your home assistant.")
+    #     time.sleep(10)
