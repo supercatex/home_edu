@@ -34,7 +34,7 @@ class Follower(object):
             n = np.where(depth_image == distance)
             offset_z = n[1][0]
         
-        if distance == 0 or distance > 800:
+        if distance == 0 or distance > 1200:
             return x, z
         
         error = distance - self.target_distance
@@ -64,7 +64,7 @@ if __name__ == "__main__":
     rospy.init_node("home_edu_follower")
     rate = rospy.Rate(20)
     
-    f = Follower(PID_1=(0.001, 0.00001, 0.001), PID_2=(0.0015, 0.00003, 0.01))
+    f = Follower(topic_name="camera_top", PID_1=(0.001, 0.00001, 0.001), PID_2=(0.0015, 0.00003, 0.01))
     while not rospy.is_shutdown():
         x, z = f.next_step()
         print(x, z)

@@ -41,7 +41,7 @@ class Manipulator(object):
     
     # Reset arm to default pose.
     def reset(self):
-        self.exec_servos_pos(0, Manipulator.ARM_LENGTH * 2, 0, -90)
+        self.exec_servos_pos(15, 20, 0, 0)
         self.close()
         self.wait()
         print("Manipulator is ready.")
@@ -92,19 +92,19 @@ class Manipulator(object):
             print("Same poisition point(%.2f, %.2f, %.2f)" % (x, y, z))
             return
         
-        try:
-            alpha, delta_list = self.calc_servos_pos2(x, y, z, w, mode)
+        # try:
+        alpha, delta_list = self.calc_servos_pos2(x, y, z, w, mode)
         
-            # Execute.
-            for i in range(len(alpha)):
-                self.servos[i].set_speed(Manipulator.MAX_SPEED * delta_list[i])
-                self.servos[i].set_radian(alpha[i])
-            self.target_x = x
-            self.target_y = y
-            self.target_z = z
-            self.target_w = w
-        except Exception as e:
-            print(e)
+         # Execute.
+        for i in range(len(alpha)):
+            self.servos[i].set_speed(Manipulator.MAX_SPEED * delta_list[i])
+            self.servos[i].set_radian(alpha[i])
+        self.target_x = x
+        self.target_y = y
+        self.target_z = z
+        self.target_w = w
+        # except Exception as e:
+        #     print(e)
     
     def calc_servos_pos2(self, x, y, z, w=0, mode=0):
         
@@ -161,33 +161,33 @@ if __name__ == "__main__":
     manipulator.reset()
     
     # 3. Action.
-    manipulator.exec_servos_pos(10, 5, 0, 45)
-    manipulator.wait()
-    
-    manipulator.exec_servos_pos(10, 5, 0, -45)
-    manipulator.wait()
-    
-    manipulator.exec_servos_pos(10, 5, 0, 0)
-    manipulator.wait()
-    
-    manipulator.exec_servos_pos(10, 5, -8, 0)
-    manipulator.wait()
-    
-    manipulator.exec_servos_pos(10, 5, 8, 0)
-    manipulator.wait()
-    
-    manipulator.exec_servos_pos(10, 5, 0, 0)
-    manipulator.wait()
-    
-    # 4. Open and close gripper.
-    manipulator.open()
-    manipulator.wait()
-    
-    manipulator.close(20)
-    manipulator.wait()
-    
-    manipulator.open()
-    manipulator.wait()
-    
-    manipulator.close(0)
-    manipulator.wait()
+    # manipulator.exec_servos_pos(10, 5, 0, 45)
+    # manipulator.wait()
+    #
+    # manipulator.exec_servos_pos(10, 5, 0, -45)
+    # manipulator.wait()
+    #
+    # manipulator.exec_servos_pos(10, 5, 0, 0)
+    # manipulator.wait()
+    #
+    # manipulator.exec_servos_pos(10, 5, -8, 0)
+    # manipulator.wait()
+    #
+    # manipulator.exec_servos_pos(10, 5, 8, 0)
+    # manipulator.wait()
+    #
+    # manipulator.exec_servos_pos(10, 5, 0, 0)
+    # manipulator.wait()
+    #
+    # # 4. Open and close gripper.
+    # manipulator.open()
+    # manipulator.wait()
+    #
+    # manipulator.close(20)
+    # manipulator.wait()
+    #
+    # manipulator.open()
+    # manipulator.wait()
+    #
+    # manipulator.close(0)
+    # manipulator.wait()
