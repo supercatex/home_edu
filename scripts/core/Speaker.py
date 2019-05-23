@@ -58,6 +58,7 @@ if __name__ == "__main__":
     s.ambient_noise()
     P.say("Hello, I am ready.")
     while True:
+        # s.ambient_noise()
         print("ready")
         t = s.listen()
         print(t)
