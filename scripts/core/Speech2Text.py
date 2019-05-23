@@ -2,6 +2,10 @@
 import speech_recognition
 
 '''
+https://pypi.org/project/PyAudio/#files
+cd PyAudio-0.2.11
+sudo python setup.py install
+
 /usr/share/alsa/alsa.conf
 #pcm.rear cards.pcm.rear
 #pcm.center_lfe cards.pcm.center_lfe
@@ -29,6 +33,7 @@ class Speech2Text(object):
         try:
             with speech_recognition.Microphone() as source:
                 audio = self.recognizer.listen(source)
+                print("Got the audio.")
             text = self.recognizer.recognize_google(audio, language=self.lang)
             return text
         except Exception as e:
