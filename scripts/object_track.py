@@ -19,7 +19,7 @@ def calc_kp(object_dis, known_dis, kp):
 
 
 p1 = 1.0 / 2600.0
-p2 = 1.0 / 260.0
+p2 = 1.0 / 1400.0
 negative_p = -(1.0 / 2600.0)
 horizan = 595
 forward_speed = 0

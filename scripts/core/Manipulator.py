@@ -16,7 +16,7 @@ class Manipulator(object):
     
     # Two ARM is same length.
     ARM_LENGTH = 10.5
-    HAND_LENGTH = 13
+    HAND_LENGTH = 12.5
     MAX_SPEED = 1.0
     
     def __init__(self):
@@ -41,7 +41,7 @@ class Manipulator(object):
     
     # Reset arm to default pose.
     def reset(self):
-        self.exec_servos_pos(15, 20, 0, 0)
+        self.exec_servos_pos(0, Manipulator.ARM_LENGTH * 2 + Manipulator.HAND_LENGTH, 0, -90)
         self.close()
         self.wait()
         print("Manipulator is ready.")
@@ -92,9 +92,12 @@ class Manipulator(object):
             print("Same poisition point(%.2f, %.2f, %.2f)" % (x, y, z))
             return
         
-        # try:
-        alpha, delta_list = self.calc_servos_pos2(x, y, z, w, mode)
-        
+        try:
+            alpha, delta_list = self.calc_servos_pos2(x, y, z, w, mode)
+        except Exception as e:
+            print(e)
+            return
+
          # Execute.
         for i in range(len(alpha)):
             self.servos[i].set_speed(Manipulator.MAX_SPEED * delta_list[i])
@@ -103,28 +106,24 @@ class Manipulator(object):
         self.target_y = y
         self.target_z = z
         self.target_w = w
-        # except Exception as e:
-        #     print(e)
     
     def calc_servos_pos2(self, x, y, z, w=0, mode=0):
         
-        print("Goto:", x, y, z)
-        a = float(w) * math.pi / 180
+        print("Goto:", x, y, z, w)
+        a = float(-w) * math.pi / 180
+        b = math.atan2(z, x)
+
         new_x = x - Manipulator.HAND_LENGTH * math.cos(a)
         new_y = y - Manipulator.HAND_LENGTH * math.sin(a)
-        new_z = 0
-        
-        alpha, delta_list = self.calc_servos_pos(new_x, new_y, new_z, w)
-        print("Calc1:", new_x, new_y, new_z, alpha[0])
+        new_z = z
 
-        b = math.atan2(z, x)
-        new_z = z - Manipulator.HAND_LENGTH * math.sin(b)
         alpha, delta_list = self.calc_servos_pos(new_x, new_y, new_z, w)
-        print("Calc2:", new_x, new_y, new_z, alpha[0])
-        
-        if mode == 1:   # Rotate first
+
+        if mode == 0:       # Normal
+            pass
+        elif mode == 1:     # Rotate first
             delta_list[0] = Manipulator.MAX_SPEED
-        elif mode == 2: # Rotate last
+        elif mode == 2:     # Rotate last
             delta_list[0] = np.min(delta_list)
         
         return alpha, delta_list
@@ -161,33 +160,34 @@ if __name__ == "__main__":
     manipulator.reset()
     
     # 3. Action.
-    # manipulator.exec_servos_pos(10, 5, 0, 45)
-    # manipulator.wait()
-    #
-    # manipulator.exec_servos_pos(10, 5, 0, -45)
-    # manipulator.wait()
-    #
-    # manipulator.exec_servos_pos(10, 5, 0, 0)
-    # manipulator.wait()
-    #
-    # manipulator.exec_servos_pos(10, 5, -8, 0)
-    # manipulator.wait()
-    #
-    # manipulator.exec_servos_pos(10, 5, 8, 0)
-    # manipulator.wait()
-    #
-    # manipulator.exec_servos_pos(10, 5, 0, 0)
-    # manipulator.wait()
-    #
-    # # 4. Open and close gripper.
-    # manipulator.open()
-    # manipulator.wait()
-    #
-    # manipulator.close(20)
-    # manipulator.wait()
-    #
-    # manipulator.open()
-    # manipulator.wait()
-    #
-    # manipulator.close(0)
-    # manipulator.wait()
+    manipulator.exec_servos_pos(10, 5, 0, 45)
+    manipulator.wait()
+
+    manipulator.exec_servos_pos(10, 8, 10, 0)
+    manipulator.wait()
+
+    manipulator.exec_servos_pos(10, 5, 0, 45)
+    manipulator.wait()
+
+    manipulator.exec_servos_pos(10, 8, -10, 0)
+    manipulator.wait()
+
+    manipulator.exec_servos_pos(15, 0, 0, 90)
+    manipulator.open()
+    manipulator.wait()
+
+    manipulator.exec_servos_pos(15, -8, 0, 90)
+    manipulator.wait()
+
+    manipulator.close()
+    manipulator.wait()
+
+    manipulator.exec_servos_pos(0, 30, 0, -90)
+    manipulator.wait()
+
+    manipulator.exec_servos_pos(5, 5, 0, 0)
+    manipulator.open()
+    manipulator.wait()
+
+    manipulator.close()
+    manipulator.wait()
