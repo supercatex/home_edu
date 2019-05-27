@@ -41,7 +41,7 @@ class Manipulator(object):
     
     # Reset arm to default pose.
     def reset(self):
-        self.exec_servos_pos(0, Manipulator.ARM_LENGTH * 2 + Manipulator.HAND_LENGTH, 0, -90)
+        self.exec_servos_pos(10, 5, 0, 45)
         self.close()
         self.wait()
         print("Manipulator is ready.")
@@ -49,12 +49,20 @@ class Manipulator(object):
     def calc_servos_pos(self, x, y, z, w=0):
         # Calculation.
         alpha = [0, 0, 0, 0]
+
+        alpha[0] = math.atan2(z, x)
+
         t = 0
         if x != 0:
             t = abs(x) / x
         x = math.sqrt(x * x + z * z) * t
-        if x != 0:
-            alpha[0] = math.asin(z / x)
+        y = y
+        z = 0
+
+        w = float(w) * math.pi / 180
+        x = x - Manipulator.HAND_LENGTH * math.cos(w)
+        y = y + Manipulator.HAND_LENGTH * math.sin(w)
+        print("Goto:", x, y)
     
         L1 = Manipulator.ARM_LENGTH
         L2 = Manipulator.ARM_LENGTH
@@ -65,13 +73,13 @@ class Manipulator(object):
         theta1 = 0
         if L3_2 != 0:
             theta1 = math.acos((L1_2 + L3_2 - L2_2) / (2 * L1 * math.sqrt(L3_2)))
-        alpha[1] = math.pi / 2 - theta1 - math.atan2(y, x)
-    
-        theta2 = 0
+        alpha[1] = math.pi / 2 - math.atan2(y, x) - theta1
+
         theta2 = math.acos((L1_2 + L2_2 - L3_2) / (2 * L1 * L2))
         alpha[2] = math.pi - theta2
-    
-        alpha[3] = math.pi / 2 - alpha[1] - alpha[2] + w * math.pi / 180
+
+        theta3 = theta1
+        alpha[3] = math.atan2(y, x) - theta3 + w
     
         delta_list = []
         for i in range(len(alpha)):
@@ -110,14 +118,8 @@ class Manipulator(object):
     def calc_servos_pos2(self, x, y, z, w=0, mode=0):
         
         print("Goto:", x, y, z, w)
-        a = float(-w) * math.pi / 180
-        b = math.atan2(z, x)
 
-        new_x = x - Manipulator.HAND_LENGTH * math.cos(a)
-        new_y = y - Manipulator.HAND_LENGTH * math.sin(a)
-        new_z = z
-
-        alpha, delta_list = self.calc_servos_pos(new_x, new_y, new_z, w)
+        alpha, delta_list = self.calc_servos_pos(x, y, z, w)
 
         if mode == 0:       # Normal
             pass
