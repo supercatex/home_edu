@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 import rospy
 from core import Dynamixel
+from core import Kobuki
+from core import Astra
 import math
 import speech_recognition as sr
 import numpy as np
@@ -11,6 +13,8 @@ import datetime
 import time
 #define
 ARM_LENGTH = 10.5
+chassis = Kobuki()
+camera = Astra()
 MAX_SPEED = 1.0
 L1 ,L2= ARM_LENGTH, ARM_LENGTH
 r = sr.Recognizer()
@@ -138,25 +142,30 @@ def go_to_coordinate(x,y):
 	shoulder.set_radian(rotate_a)
 	elbow.set_radian(rotate_b)
 
+def follower_line(dis):
+
+	while(1):
+		#rgb = camera.rgb_image
+		depth = camera.depth_image
+		#activate the task
+		if (0<depth[240 , 320]<60):
+			startfollow = 1
+		#start following/"
+
+		while(depth[240,320]>dis and startfollow == 1):
+			chassis.move(0.5,0)
+
 if __name__ == "__main__":
 	rospy.init_node("home_edu_arm", anonymous=True)
-	engine = pyttsx3.init();
+	engine = pyttsx3.init()
 	engine.setProperty('rate', 100)
-	engine.say('hello, my name is mustar');
-	engine.runAndWait();
+	engine.say('hello, my name is mustar')
+	engine.runAndWait()
 	listening= 1
 	while (listening == 1):
 		text = speaktotext()
 		print(text)
 		autoanswor(text)
-
-	'''engine = pyttsx3.init();
-	engine.setProperty('rate', 100)
-	engine.say(text);
-	engine.runAndWait();'''
-	
-
-	MAX_SPEED = 1.2
 	
 	shoulder = Dynamixel("shoulder_controller")
 	
