@@ -5,6 +5,7 @@ import numpy as np
 from Astra import Astra
 import math
 from Manipulator import Manipulator
+from Kobuki import Kobuki
 
 
 class ColorDetector(object):
@@ -87,8 +88,11 @@ if __name__ == "__main__":
     
     camera = Astra()
     arm = Manipulator()
+    chassis = Kobuki()
     detector = ColorDetector((50, 16, 16), (80, 255, 255))
+
     key = 0
+    is_turning = False
     while not rospy.is_shutdown():
         rgb_image = camera.rgb_image
         mask = detector.get_mask(rgb_image)
@@ -99,6 +103,7 @@ if __name__ == "__main__":
             cv.circle(rgb_image, (cx, cy), 5, (0, 0, 255), -1)
 
             rx, ry, rz = detector.physical_distance(camera.depth_image, cx, cy, 30)
+            rx = rx + 40
             # rospy.loginfo("%.1f mm, %.1f mm, %.1f mm" % (rx, ry, rz))
             cv.putText(rgb_image, "%.1fcm, %.1fcm, %.1fcm" % (rx/10, ry/10, rz/10),
                        (cx + 20, cy),
@@ -106,25 +111,38 @@ if __name__ == "__main__":
                        cv.LINE_AA
             )
             
-            if key == 32:
-                ay = -(ry / 10 - 40.5)
+            if key == 32 or is_turning:
+                is_turning = True
+
+                ay = -(ry / 10 - 36.5)
                 az = -rx / 10
-                ax = rz / 10 - 18 + 6 * math.cos(math.atan2(rx, rz)) * (-rx/abs(rx))
-                arm.exec_servos_pos(7, 10, 0, mode=2)
-                arm.open()
-                arm.wait()
-                arm.exec_servos_pos(ax, ay, az, 0, mode=1)
-                arm.wait()
-                arm.close(30)
-                arm.wait()
-                arm.exec_servos_pos(7, 15, 0)
-                arm.wait()
-                arm.exec_servos_pos(ax, ay, az, -15)
-                arm.wait()
-                arm.open()
-                arm.wait()
-                arm.exec_servos_pos(7, 10, 0, mode=2)
-                arm.wait()
+                ax = rz / 10 - 18 + 6 * math.cos(math.atan2(rx, rz))# * (-rx/abs(rx))
+
+                if abs(az) < 5:
+                    is_turning = False
+                    chassis.move(0, 0)
+                    arm.exec_servos_pos(7, 10, 0, mode=2)
+                    arm.open()
+                    arm.wait()
+                    arm.exec_servos_pos(ax, ay, az, 0, mode=1)
+                    arm.wait()
+                    arm.close(25)
+                    arm.wait()
+                    arm.exec_servos_pos(7, 15, 0)
+                    arm.wait()
+                    arm.exec_servos_pos(ax, ay, az, -15)
+                    arm.wait()
+                    arm.open()
+                    arm.wait()
+                    arm.exec_servos_pos(7, 10, 0, mode=2)
+                    arm.wait()
+                else:
+                    if az > 0:
+                        chassis.move(0, 0.3)
+                    else:
+                        chassis.move(0, -0.3)
+                    cv.waitKey(100)
+
                 
             # cv.imshow("depth", camera.depth_image)
         cv.imshow("image", rgb_image)
