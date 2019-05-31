@@ -36,17 +36,32 @@ def calc_ph(x, y, center_point):
     return sqrt((center_point[1] - x) ** 2 + (center_point[0] - y) ** 2)  # center_point format: (y, x)
 
 
-p1 = 1.0 / 1300.0
-p2 = 1.0 / 1300.0
+# Kps for turning and forward
+p1 = 1.0 / 1400.0
+p2 = -(1.0 / 1400.0)
 turn_p = -(1.0 / 320.0)
+
+# The nearest distance for the robot between the operator
 horizan = 595
+
+# Set the forward and turn speed
 forward_speed = 0
+turn_speed = 0
+
+# Set this two variable for finding the most center point
 most_center_point = (0, 0)
 most_center_dis = 0
 center_point = (240, 320)
+
+# The center point
 center_x = center_point[1]
-turn_speed = 0
+
+# size of the image
 size = (480, 640)
+
+# Color range of human skin
+min = np.array([0, 48, 80], np.unit8)
+max = np.array([18, 255, 255], np.unit8)
 
 mask = genderate_mask(size)
 
@@ -88,8 +103,11 @@ while not rospy.is_shutdown():
             else:
                 forward_speed = calc_kp(val, horizan, p2)
 
-        if not minLoc[0] == 0:
-            turn_speed = calc_kp(minLoc[0], center_x, turn_p)
+            if not minLoc[0] == 0:
+                turn_speed = calc_kp(minLoc[0], center_x, turn_p)
+        else:
+            forward_speed = 0
+            turn_speed = 0
 
         chassis.move(forward_speed, turn_speed)
         print("Darkness point: %s, Location: %s, Distance: %s, Speed: %s, Turn: %s, To center: %s" % (val, minLoc, val, forward_speed, turn_speed, Dist))
