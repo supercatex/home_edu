@@ -63,6 +63,7 @@ size = (480, 640)
 min = np.array([0, 48, 80], np.unit8)
 max = np.array([18, 255, 255], np.unit8)
 
+
 mask = genderate_mask(size)
 
 cv.namedWindow("frame")
@@ -71,9 +72,22 @@ cv.setMouseCallback("frame", c.mouse_callback)
 while not rospy.is_shutdown():
     frame, image = c.depth_image, c.rgb_image
 
+    blurred_frame = cv.GaussianBlur(image, (5, 5), 0)
+
+    # Convert RGB image to BGR image
+
+    hsv = cv.cvtColor(image, cv.COLOR_RGB2HSV)
+
+    # Set mask of skin
+    mask_skin = cv.inRange(hsv, min, max)
+
     # frame = np.int0(mask * frame)
 
     zeros = np.nonzero(frame)
+
+    kernal = cv.getStructuringElement(cv.MORPH_ELLIPSE, (11, 11))
+    mask_skin = cv.dilate(mask_skin, kernal, iterations=2)
+    mask_skin = cv.erode(mask_skin, kernal, iterations=2)
 
     if len(zeros[0]) > 0:
         val = np.min(frame[zeros])
