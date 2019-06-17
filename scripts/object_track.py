@@ -60,8 +60,8 @@ center_x = center_point[1]
 size = (480, 640)
 
 # Color range of human skin
-min = np.array([0, 48, 80], np.unit8)
-max = np.array([18, 255, 255], np.unit8)
+min = np.array([0, 48, 80], np.uint8)
+max = np.array([18, 255, 255], np.uint8)
 
 
 mask = genderate_mask(size)

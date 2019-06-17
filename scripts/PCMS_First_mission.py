@@ -48,16 +48,17 @@ def turn_180_degree(chassis):
 
 def speech_to_text():
     global r
-    with sr.Microphone() as source:
-        audio = r.listen(source)
+
     try:
+        with sr.Microphone() as source:
+            audio = r.listen(source)
         text = r.recognize_google(audio, language="en-US")
         P.say("You said, {}".format(text))
         return text
     except Exception as e:
+        # r = sr.Recognizer()
         print(e)
-        P.say("Please say one more time")
-        return ""
+        return "Please ask again"
 
 
 def Answer_question(text):
@@ -93,13 +94,31 @@ if __name__ == '__main__':
     # Init the speaker cam and kobuki
     P = speaker()
 
+    r = sr.Recognizer()
+
+# # --------
+# #     ambient_noice()
+#     P.say("I'm ready")
+#     # Question_count = 0
+#     # Question part
+#     while not rospy.is_shutdown():
+#         P.say("Please ask")
+#
+#         try:
+#             operator_question = speech_to_text()
+#
+#             P.say(Answer_question(operator_question))
+#
+#         except Exception as e:
+#             P.say("We've seen an error: {}".format(e))
+# ---------
     # base_path = os.path.abspath("./")
     time.sleep(4)
 
     P.say("I will start now")
     male_count, female_count = 0, 0
 
-    r = sr.Recognizer()
+
 
     MODEL_MEAN_VALUES = (78.4263377603, 87.7689143744, 114.895847746)
     gender_list = ['Male', 'Female']
@@ -116,7 +135,7 @@ if __name__ == '__main__':
     _detector = dlib.get_frontal_face_detector()
     image_path = "/home/mustar/pcms/src/home_edu/scripts/temp.jpg"
 
-    c = astra("cam2")
+    c = astra("camera")
     chassis = kobuki()
     cv.namedWindow("image")
     cv.setMouseCallback("image", c.mouse_callback)
@@ -129,7 +148,7 @@ if __name__ == '__main__':
             time.sleep(2)
             P.say("Please look at my top camera. Ready? 3, 2, 1, chieese")
             frame = c.rgb_image
-            image = cv.resize(frame, (1280, 960))
+            image = cv.resize(frame, (1210, 910))
             time.sleep(1)
             cv.imwrite("/home/mustar/pcms/src/home_edu/scripts/temp.jpg", image)
             P.say("I've just take a photo of you")
@@ -208,9 +227,13 @@ if __name__ == '__main__':
     while not rospy.is_shutdown():
         P.say("Please ask")
 
-        operator_question = speech_to_text()
+        try:
+            operator_question = speech_to_text()
 
-        P.say(Answer_question(operator_question))
+            P.say(Answer_question(operator_question))
+
+        except Exception as e:
+            P.say("We've seen an error: {}".format(e))
         #
         # if Question_count == 5:
         #     break
