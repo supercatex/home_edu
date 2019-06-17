@@ -37,6 +37,9 @@ def depth_detect(frame):
 
 	except Exception:
 		print("error")
+		
+def listen_callback(data):
+	msg = data
 
 if __name__ == '__main__':
 	rospy.init_node("home_edu_PCMS_Second_mission", anonymous=True)
@@ -51,14 +54,13 @@ if __name__ == '__main__':
 	
 	c = astra("cam_top")
 	f = follow()
-	'''
-	f.register(
-		"follower",
-		"/turtlebot_follower/change_state",
-		SetFollowState
-	)
-	'''
 	
+	rospy.Subscriber(
+		"/home_edu_Listen/msg", 
+		String, 
+		listen_callback,
+		queue_size=1
+	)
 	
 	while True:
 		#frame = c.rgb_image
@@ -72,28 +74,12 @@ if __name__ == '__main__':
 	
 	time.sleep(1)
 	s.say("please stand still and say follow me")
-	'''
-	'''
 	m = manipulator()
-	
+	.
 	goal = [[-1.49, 8.48, 0.00247], [7.51, 7.52, -0.00143], [10.6, -3.76, -0.00143]]
 	
 	while True:
-		print("start listening...")
-		cmd = t.listen()
-		print("cmd:", cmd)
 		
-		if cmd == 'follow me':
-			s.say("please walk slowly")
-			flag = True
-		elif cmd == 'stop':
-			flag = False
-		
-		while flag:
-		 	f.follow(c.depth_image, True)
-
-		f.follow(c.depth_image, False)
-		s.say("I have stopped")
 		x, y, z = chassis.get_current_pose()
 		print(x, y, z)
 		print('finished append')

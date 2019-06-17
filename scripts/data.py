@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*
 
 question =	{
-  "handsome person": "I think that Justin Trudeau is very handsome",
+  "handsome person guy": "I think that Justin Trudeau is very handsome",
   "time zones": "Canada spans almost ten million square km and comprises six time zones",
   "longest street": "Yonge Street in Ontario is the longest street in the world",
   "Yonge Street": "Yonge street is almost two thousand km, starting at Lake Ontario, and running north to the Minnesota border",
@@ -22,8 +22,8 @@ question =	{
   "ice": "The Hotel de Glace requires about four hundred tons of ice.",
   "snow": "Every year, twelve thousand tons of snow are used for The Hotel de Glace.",
   "summer": "No. Every summer it melts away, only to be rebuilt the following winter.",
-  "where only dessert": "Canada’s only desert is British Columbia.",
-  "big only desert": "The British Columbia desert is only fifthteen miles long.",
+  "where only desert": "Canada's only desert is British Columbia.",
+  "big only desert texas": "The British Columbia desert is only fifthteen miles long.",
   "male": "Leonard Cohen, Keanu Reeves, and Jim Carrey.",
   "female": "Celine Dion, Pamela Anderson, and Avril Lavigne.",
   "origin": "Comic Sans is based on Dave Gibbons' lettering in the Watchmen comic books",

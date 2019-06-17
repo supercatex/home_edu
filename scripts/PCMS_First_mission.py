@@ -137,8 +137,6 @@ if __name__ == '__main__':
 
     c = astra("camera")
     chassis = kobuki()
-    cv.namedWindow("image")
-    cv.setMouseCallback("image", c.mouse_callback)
 
     while True:
         a = turn_180_degree(chassis)
@@ -164,6 +162,9 @@ if __name__ == '__main__':
     # cv.imshow('image', image)
     # cv.waitKey(1)
     # gray = cv.cvtColor(c.rgb_image, cv.COLOR_RGB2GRAY)
+
+    cv.namedWindow("image")
+    cv.setMouseCallback("image", c.mouse_callback)
 
     dets, _, _ = _detector.run(image, False)
     print(dets)
