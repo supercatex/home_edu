@@ -11,10 +11,11 @@ from core import Kobuki as kobuki
 from core import Speaker as speaker
 from core import Speech2Text as speech2text
 from core import Astra as astra
-from core import ServiceController as follow
+#from core import ServiceController as follow
 from turtlebot_msgs.srv import SetFollowState
 from core import GenderDetection as Gender
 from core import Manipulator as manipulator
+from core import PH_Follow_me as follow
 
 def depth_detect(frame):
 	try:
@@ -43,18 +44,21 @@ if __name__ == '__main__':
 	s = speaker()
 	print("started")
 	s.say("hello, I'm your assistant")
-	'''
+	
 	t = speech2text()
 	t.ambient_noise()
 	chassis = chassis()
 	
 	c = astra("cam_top")
 	f = follow()
+	'''
 	f.register(
 		"follower",
 		"/turtlebot_follower/change_state",
 		SetFollowState
 	)
+	'''
+	
 	
 	while True:
 		#frame = c.rgb_image
@@ -81,51 +85,48 @@ if __name__ == '__main__':
 		
 		if cmd == 'follow me':
 			s.say("please walk slowly")
-			#f.send_message("follower", 1)
-			print("after follower 1")
+			flag = True
 		elif cmd == 'stop':
-			s.say("ok, i have stopped")
-			#f.send_message("follower", 0)
-			x, y, z = chassis.get_current_pose()
-			print(x, y, z)
-			print('finished append')
-			time.sleep(1)
-			s.say("please say the location of where the bag should be put")
-			place = t.listen()
-			if place == 'kitchen':
-				i = 0
-			elif place == 'bedroom':
-				i = 1
-			elif place == 'living room':
-				i = 2
-			else:
-				i = 0
-			print(place)
-			s.say("please hand me the bag on my robot arm")
-			time.sleep(1)
-			m.reset()
-			m.wait()
-			m.exec_servos_pos(10,20,0,0)
-			m.wait()
-			m.open()
-			time.sleep(5)
-			m.close()
-			time.sleep(1)
-			s.say("girpped, i am now goin to the location")
-			print(goal[i][0], goal[i][1], goal[i][2])
-			chassis.move_to(goal[i][0], goal[i][1], goal[i][2])
-			s.say("arrived to goal")
-			m.open()
-			s.say("please take the bag")
-			break
+			flag = False
 		
-		while True:
-			time.sleep(1)
-			s.say("please follow me to the garage")
-			chassis.move_to(x, y, z)
-			s.say("arrived to the garage")
-			break
-'''
+		while flag:
+		 	f.follow(c.depth_image, True)
+
+		f.follow(c.depth_image, False)
+		s.say("I have stopped")
+		x, y, z = chassis.get_current_pose()
+		print(x, y, z)
+		print('finished append')
+		time.sleep(1)
+		s.say("please say the location of where the bag should be put")
+		place = t.listen()
+		if place == 'kitchen':
+			i = 0
+		elif place == 'bedroom':
+			i = 1
+		elif place == 'living room':
+			i = 2
+		else:
+			i = 0
+		print(place)
+		s.say("please hand me the bag on my robot arm")
+		time.sleep(1)
+		m.reset()
+		m.wait()
+		m.exec_servos_pos(10,20,0,0)
+		m.wait()
+		m.open()
+		time.sleep(5)
+		m.close()
+		time.sleep(1)
+		s.say("girpped, i am now goin to the location")
+		print(goal[i][0], goal[i][1], goal[i][2])
+		chassis.move_to(goal[i][0], goal[i][1], goal[i][2])
+		s.say("arrived to goal")
+		m.open()
+		s.say("please take the bag")
+		break
+
 	k = kobuki()
 	g = Gender("/home/mustar/pcms/src/home_edu/scripts/libs/deploy_gender.prototxt", "/home/mustar/pcms/src/home_edu/scripts/libs/gender_net.caffemodel")
 	
@@ -147,6 +148,10 @@ if __name__ == '__main__':
 			elif x_val > 340:
 				k.move(0, -0.3)
 			else:
+				time.sleep(1)
+				s.say("please follow me to the garage")
+				chassis.move_to(x, y, z)
+				s.say("arrived to the garage")
 				break
 		'''
 			for x1, y1, x2, y2 in position:
