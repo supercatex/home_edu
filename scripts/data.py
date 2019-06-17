@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*
 
+# Old questions keyword structure
 question =	{
   "handsome person guy": "I think that Justin Trudeau is very handsome",
   "time zones": "Canada spans almost ten million square km and comprises six time zones",
@@ -53,3 +54,21 @@ question =	{
   "programmer": "Ada Lovelace.",
   "PDF": "Adobe Wan Kenobi.",
 }
+
+# New question keyword structure
+data = [
+  {
+    "question": "Who’s the most handsome person in Canada?",
+    "answer": "I think that Justin Trudeau is very handsome.",
+    "keywords": [
+      ['who', "who's"],
+      ['handsome'],
+      ['Canada']
+    ]
+  }
+]
+
+for d in data:
+    for ks in d['keywords']:
+        for k in ks:
+            print(k)
