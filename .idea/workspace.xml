@@ -3,11 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="d904fe41-8673-45a4-8ff8-97f506d55c13" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/map/deonsire_map.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/map/deonsire_map.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/PCMS_Second_mission.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/PCMS_Second_mission.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/PCMS_Second_mission_listen.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/PCMS_Second_mission_listen.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/core/PH_Follow_me.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/core/PH_Follow_me.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/core/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/core/__init__.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -41,8 +36,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/scripts/PCMS_Second_mission.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="578">
-              <caret line="126" column="25" lean-forward="true" selection-start-line="26" selection-start-column="25" selection-end-line="126" selection-end-column="25" />
+            <state relative-caret-position="133">
+              <caret line="100" column="40" lean-forward="true" selection-start-line="100" selection-start-column="40" selection-end-line="100" selection-end-column="40" />
               <folding>
                 <element signature="e#23#35#0" expanded="true" />
               </folding>
@@ -434,7 +429,14 @@
       <option name="project" value="LOCAL" />
       <updated>1558103849746</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="student">
+      <created>1560773951584</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1560773951584</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -771,8 +773,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/scripts/PCMS_Second_mission.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="578">
-          <caret line="126" column="25" lean-forward="true" selection-start-line="26" selection-start-column="25" selection-end-line="126" selection-end-column="25" />
+        <state relative-caret-position="133">
+          <caret line="100" column="40" lean-forward="true" selection-start-line="100" selection-start-column="40" selection-end-line="100" selection-end-column="40" />
           <folding>
             <element signature="e#23#35#0" expanded="true" />
           </folding>
