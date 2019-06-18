@@ -56,19 +56,61 @@ question =	{
 }
 
 # New question keyword structure
-data = [
-  {
-    "question": "Who’s the most handsome person in Canada?",
-    "answer": "I think that Justin Trudeau is very handsome.",
-    "keywords": [
-      ['who', "who's"],
-      ['handsome'],
-      ['Canada']
-    ]
-  }
-]
+data = []
 
-for d in data:
-    for ks in d['keywords']:
-        for k in ks:
-            print(k)
+def load_data():
+    situation = 0
+    file = open("data.txt")
+    
+    for ds in file.readlines():
+        if ds == "\n":
+            situation = 1
+            continue
+        
+        elif situation == 1:
+            data.append({
+                "question": "",
+                "answer": "",
+                "keyword": []
+            })
+            data[-1]["question"] = ds.strip()
+            situation = 2
+        
+        elif situation == 2:
+            data[-1]["answer"] = ds.strip()
+            situation = 3
+        
+        elif situation == 3:
+            keyword = ds.strip().split(",")
+            for k in range(len(keyword)):
+                keyword[k] = keyword[k].strip()
+            data[-1]["keyword"].append(keyword)
+                
+    file.close()
+    return data
+    
+
+def process_data(text, database):
+    for d in database:
+        t_and = True
+        for keys in d["keyword"]:
+            t_or = False
+            for key in keys:
+                if key.lower() in text.lower().strip().split(" "):
+                    t_or = True
+                    break
+            
+                else:
+                    t_or = False
+        
+            if not t_or:
+                t_and = False
+    
+        if t_and:
+            return d
+            
+
+if __name__ == '__main__':
+    data = load_data()
+    print(data)
+    print(process_data("Who created the python programming language", data))

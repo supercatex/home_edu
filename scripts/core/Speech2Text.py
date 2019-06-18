@@ -1,5 +1,8 @@
 #!/usr/bin/env python
-import speech_recognition
+import speech_recognition 
+import rospy
+from std_msgs.msg import String
+import time
 
 '''
 https://pypi.org/project/PyAudio/#files
@@ -20,34 +23,48 @@ sudo python setup.py install
 
 
 class Speech2Text(object):
-    
-    def __init__(self, lang="en-US"):
-        self.lang = lang
-        self.recognizer = speech_recognition.Recognizer()
-    
-    def ambient_noise(self):
-        with speech_recognition.Microphone() as source:
-            self.recognizer.adjust_for_ambient_noise(source)
-    
-    def listen(self):
-        try:
-            with speech_recognition.Microphone() as source:
-                audio = self.recognizer.listen(source)
-                print("Got the audio.")
-            text = self.recognizer.recognize_google(audio, language=self.lang)
-            return text
-        except Exception as e:
-            print(e)
-            return ""
+
+	def __init__(self, lang="en-US"):
+		self.lang = lang
+		self.recognizer = speech_recognition.Recognizer()  
+		self.publisher = rospy.Publisher(
+			"/home_edu/facial",
+			String,
+			queue_size=1,
+			latch=True
+		)
+
+	def ambient_noise(self):
+		with speech_recognition.Microphone() as source:
+			self.recognizer.adjust_for_ambient_noise(source)
+
+	def listen(self, msg1="listening", msg2="processing", msg3="finished", f1="smiling", f2="suspicious", f3="smart", keep_message=False):
+		try:
+			with speech_recognition.Microphone() as source:
+				cmd = f1 + ":" + msg1
+				self.publisher.publish(cmd)
+				audio = self.recognizer.listen(source)
+				print("Got the audio.")
+			cmd = f2 + ":" + msg2
+			self.publisher.publish(cmd)
+			text = self.recognizer.recognize_google(audio, language=self.lang)
+			cmd = f3 + ":" + text
+			self.publisher.publish(cmd)
+			time.sleep(1.5)
+			return text
+		except Exception as e:
+			print(e)
+			return ""
+
 
 
 if __name__ == "__main__":
-    s = Speech2Text()
-    s.ambient_noise()
-    while True:
-        print("ready")
-        t = s.listen()
-        print(t)
-        if t == "goodbye":
-            break
-    print("bye-bye")
+	s = Speech2Text()
+	s.ambient_noise()
+	while True:
+		print("ready")
+		t = s.listen()
+		print(t)
+		if t == "goodbye":
+			break
+	print("bye-bye")

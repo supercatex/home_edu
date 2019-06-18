@@ -18,6 +18,13 @@ from core import GenderDetection as Gender
 from core import Manipulator as manipulator
 from core import PH_Follow_me as PH_Follow_me
 
+publisher = rospy.Publisher(
+	"/home_edu/facial",
+	String,
+	queue_size=1,
+	latch=True
+)
+	
 def depth_detect(frame):
 	try:
 		image = frame[100:540, 100:380].copy()
@@ -43,6 +50,8 @@ def listen_callback(data):
 	global msg
 	msg = data.data
 	print(msg)
+	
+
 
 if __name__ == '__main__':
 	msg = ' '
@@ -50,7 +59,7 @@ if __name__ == '__main__':
 	rate = rospy.Rate(20)
 	s = speaker()
 	print("started")
-	s.say("hello, I'm your assistant")
+	s.say("hello, I'm your assistant", "happy-1")
 	
 	t = speech2text()
 	t.ambient_noise()
@@ -65,7 +74,7 @@ if __name__ == '__main__':
 		listen_callback,
 		queue_size=1
 	)
-	
+	_listen_publisher = rospy.Publisher("/home_edu_listen/situation", String, queue_size=1)
 	while True:
 		#frame = c.rgb_image
 		image = c.depth_image
@@ -73,31 +82,32 @@ if __name__ == '__main__':
 		if status == True:
 			print("ok")
 			break
-		else:
-			continue
 	
 	time.sleep(1)
 	s.say("please stand still and say follow me")
+	_listen_publisher.publish("true")
 	m = manipulator()
 	
 	goal = [[-1.49, 8.48, 0.00247], [7.51, 7.52, -0.00143], [10.6, -3.76, -0.00143]]
+	
+	
+	
 	k = kobuki()
 	flag = 0
 	while True:
-
 		if msg == 'follow me':
 			flag = 1
 		elif msg == 'stop':
 			flag = 2
 		else:
 			pass
-			
+		print('flag', flag)
 		forward_speed, turn_speed = f.follow(c.depth_image, flag==1)
 		k.move(forward_speed, turn_speed)
 		
 		if flag == 2:
 			break
-	
+	_listen_publisher.publish("false")
 	x, y, z = chassis.get_current_pose()
 	print(x, y, z)
 	print('finished append')
@@ -113,6 +123,7 @@ if __name__ == '__main__':
 	else:
 		i = 0
 	print(place)
+	s.say("you said" + place)
 	s.say("please hand me the bag on my robot arm")
 	time.sleep(1)
 	m.reset()

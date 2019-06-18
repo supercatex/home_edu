@@ -101,5 +101,5 @@ class FacialDisplay(object):
 
 if __name__ == "__main__":
     rospy.init_node("home_edu_facial_display", anonymous=True)
-    fd = FacialDisplay(fullscreen=True)
+    fd = FacialDisplay()
     fd.run()
