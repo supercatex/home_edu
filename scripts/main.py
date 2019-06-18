@@ -90,7 +90,7 @@ def load_data():
     return data
     
 
-def process_data(text, database):
+def answer_question_from_data(text, database):
     for d in database:
         t_and = True
         for keys in d["keyword"]:
@@ -99,7 +99,7 @@ def process_data(text, database):
                 if key.lower() in text.lower().strip().split(" "):
                     t_or = True
                     break
-            
+
                 else:
                     t_or = False
         
@@ -108,9 +108,38 @@ def process_data(text, database):
     
         if t_and:
             return d
+    
+    return {"question": "", "answer": "", "keyword": []}
             
 
 if __name__ == '__main__':
+    import speech_recognition as sr
+    import pyttsx3
+    
+    engine = pyttsx3.init()
+    
+    engine.setProperty("rate", 130)
+    engine.setProperty("volume", 1.0)
+    
+    voices = engine.getProperty("voices")
+    voice = voices[10]
+    engine.setProperty('voice', voice.id)
+
+    _r = sr.Recognizer()
+
     data = load_data()
-    print(data)
-    print(process_data("Who created the python programming language", data))
+    
+    while True:
+        with sr.Microphone() as source:
+            print("Preparing:")
+            _r.adjust_for_ambient_noise(source)
+            print("Ready....")
+            audio = _r.listen(source)
+        question = _r.recognize_google(audio, language="en-US")
+        answer = answer_question_from_data(question, data)
+        print("OK")
+        engine.say("You said: %s" % answer["question"])
+        print(answer["question"])
+        engine.say(answer["answer"])
+        print(answer["answer"])
+        engine.runAndWait()
