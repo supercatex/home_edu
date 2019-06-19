@@ -50,6 +50,7 @@ class ColorDetector(object):
         real_x = 0
         real_y = 0
         real_z = 0
+        \
         
         h, w = depth_image.shape
         flag = False
@@ -86,7 +87,7 @@ if __name__ == "__main__":
     rospy.init_node("home_edu_camera", anonymous=True)
     rate = rospy.Rate(20)
     
-    camera = Astra()
+    camera = Astra("top_camera")
     arm = Manipulator()
     chassis = Kobuki()
     detector = ColorDetector((50, 16, 16), (80, 255, 255))
