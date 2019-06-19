@@ -6,7 +6,6 @@ import cv2 as cv
 import numpy as np
 #import FollowMe as follow
 from std_msgs.msg import String
-from core import Manipulator as mani
 from core import RobotChassis as chassis
 from core import Kobuki as kobuki
 from core import Speaker as speaker
@@ -78,8 +77,7 @@ if __name__ == '__main__':
 	_listen_publisher = rospy.Publisher("/home_edu_Listen/situation", String, queue_size=1)
 	while True:
 		#frame = c.rgb_image
-		image = c.depth_image
-		status = depth_detect(image)
+		status = depth_detect(c.depth_image)
 		if status == True:
 			print("ok")
 			break

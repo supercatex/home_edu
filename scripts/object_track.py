@@ -11,7 +11,7 @@ rate = rospy.Rate(20)
 
 chassis = kobuki()
 
-c = astra("camera")
+c = astra("top_camera")
 
 
 def genderate_mask(size):
@@ -92,25 +92,30 @@ while not rospy.is_shutdown():
     if len(nonzeros[0]) > 0:
         val = np.min(frame[nonzeros])
         n = np.where(np.logical_and(frame <= val+30, frame > 0))
+        # print(n)
 
         most_center_point = (0, 0)
         most_center_dis = 0
         for locations in range(len(n[0])):
             x, y = n[1][locations], n[0][locations]
             Dist = calc_ph(x, y, center_point)
-            if Dist < 300:
+            if Dist < 250:
                 if most_center_point == (0, 0) and most_center_dis == 0:
                     most_center_point = x, y
                     most_center_dis = Dist
                 if Dist < most_center_dis:
                     most_center_point = x, y
                     most_center_dis = Dist
+            else:
+                pass
 
         minLoc = (most_center_point[0], most_center_point[1])
 
         error = (val - horizan)
 
-        if not val > 1370 and not val < 450:
+        notzero = len(nonzeros[0])
+
+        if (val < 1370) and (val > 440) or (len(frame) - notzero > notzero):
             if error > 0:
                 forward_speed = calc_kp(val, horizan, p1)
 
