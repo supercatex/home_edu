@@ -84,7 +84,12 @@ if __name__ == "__main__":
     rospy.init_node("home_edu_follower")
     rate = rospy.Rate(20)
     
-    f = Follower(topic_name="camera_top", PID_1=(0.001, 0.0, 0.0), PID_2=(0.01, 0.0, 0.0))
+    f = Follower(
+        topic_name="top_camera",
+        target_distance=800,
+        PID_1=(0.001, 0.0, 0.0),
+        PID_2=(0.01, 0.0, 0.0)
+    )
     while not rospy.is_shutdown():
         x, z = f.next_step()
         print(x, z)

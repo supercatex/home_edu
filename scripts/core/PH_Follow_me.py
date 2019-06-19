@@ -45,7 +45,7 @@ class PH_Follow_me(object):
 
 	# CAUTION!!! The image is DEPTH image!!!
     def follow(self, frame, flag):
-		while flag:
+		if flag:
 			zeros = np.nonzero(frame)
 			if len(zeros[0]) > 0:
 				val = np.min(frame[zeros])
@@ -57,7 +57,7 @@ class PH_Follow_me(object):
 				for locations in range(len(n[0])):
 					x, y = n[1][locations], n[0][locations]
 					Dist = self.calc_ph(x, y, self.center_point)
-					if not Dist > 250:
+					if not Dist > 400:
 						if self.most_center_point == (0, 0) and self.most_center_dis == 0:
 							self.most_center_point = x, y
 							self.most_center_dis = Dist
@@ -69,15 +69,17 @@ class PH_Follow_me(object):
 
 				error = (val - self.horizan)
 
-				if not val > 1370:
+				if val < 1370:
 					if error > 0:
 						self.forward_speed = self.calc_kp(val, self.horizan, self.p1)
 
 					else:
 						self.forward_speed = self.calc_kp(val, self.horizan, self.p2)
 
-					if not minLoc[0] == 0:
+					if minLoc[0] != 0:
 						self.turn_speed = self.calc_kp(minLoc[0], self.center_x, self.turn_p)
+					else:
+						self.turn_speed = 0
 				else:
 					self.forward_speed = 0
 					self.turn_speed = 0

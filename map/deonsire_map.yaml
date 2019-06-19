@@ -1,6 +1,6 @@
 image: /home/mustar/pcms/src/home_edu/map/deonsire_map.pgm
 resolution: 0.050000
-origin: [-16.9,-12.9,0]
+origin: [-14.72,-12.1,-0.00534]
 negate: 0
 occupied_thresh: 0.65
 free_thresh: 0.196

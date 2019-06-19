@@ -37,9 +37,9 @@ def calc_ph(x, y, center_point):
 
 
 # Kps for turning and forward
-p1 = 1.0 / 1400.0
-p2 = -(1.0 / 1400.0)
-turn_p = -(1.0 / 320.0)
+p1 = 1.0 / 1200.0
+p2 = -(1.0 / 1200.0)
+turn_p = -(1.0 / 200.0)
 
 # The nearest distance for the robot between the operator
 horizan = 595
@@ -83,22 +83,22 @@ while not rospy.is_shutdown():
 
     # frame = np.int0(mask * frame)
 
-    zeros = np.nonzero(frame)
+    nonzeros = np.nonzero(frame)
 
     kernal = cv.getStructuringElement(cv.MORPH_ELLIPSE, (11, 11))
     mask_skin = cv.dilate(mask_skin, kernal, iterations=2)
     mask_skin = cv.erode(mask_skin, kernal, iterations=2)
 
-    if len(zeros[0]) > 0:
-        val = np.min(frame[zeros])
-        n = np.where(np.logical_and(frame <= val, frame > 0))
+    if len(nonzeros[0]) > 0:
+        val = np.min(frame[nonzeros])
+        n = np.where(np.logical_and(frame <= val+30, frame > 0))
 
         most_center_point = (0, 0)
         most_center_dis = 0
         for locations in range(len(n[0])):
             x, y = n[1][locations], n[0][locations]
             Dist = calc_ph(x, y, center_point)
-            if not Dist > 250:
+            if Dist < 300:
                 if most_center_point == (0, 0) and most_center_dis == 0:
                     most_center_point = x, y
                     most_center_dis = Dist
@@ -110,7 +110,7 @@ while not rospy.is_shutdown():
 
         error = (val - horizan)
 
-        if not val > 1370:
+        if not val > 1370 and not val < 450:
             if error > 0:
                 forward_speed = calc_kp(val, horizan, p1)
 
@@ -128,10 +128,9 @@ while not rospy.is_shutdown():
 
         cv.circle(image, minLoc, 60, (0, 255, 0), 2)
 
-    cv.imshow('origin', frame)
-    cv.imshow('frame', image)
+    cv.imshow("frame", image)
 
-    if cv.waitKey(1) == ord('q'):
+    if cv.waitKey(1) in [ord('q'), 27]:
         break
 
 cv.destroyAllWindows()

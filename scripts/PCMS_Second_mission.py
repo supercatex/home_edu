@@ -38,7 +38,7 @@ def depth_detect(frame):
 
 		print(min)
 
-		if min <= 800 and min >= 500:
+		if min <= 750 and min >= 350:
 			return True
 		else:
 			return False
@@ -58,15 +58,6 @@ if __name__ == '__main__':
 	rospy.init_node("home_edu_PCMS_Second_mission", anonymous=True)
 	rate = rospy.Rate(20)
 	s = speaker()
-	print("started")
-	s.say("hello, I'm your assistant", "happy-1")
-	
-	t = speech2text()
-	t.ambient_noise()
-	chassis = chassis()
-	
-	c = astra("top_camera")
-	f = PH_Follow_me()
 	
 	rospy.Subscriber(
 		"/home_edu_Listen/msg", 
@@ -74,7 +65,17 @@ if __name__ == '__main__':
 		listen_callback,
 		queue_size=1
 	)
-	_listen_publisher = rospy.Publisher("/home_edu_listen/situation", String, queue_size=1)
+	t = speech2text()
+	t.ambient_noise()
+	chassis = chassis()
+	
+	c = astra("top_camera")
+	f = PH_Follow_me()
+	m = manipulator()
+	k = kobuki()
+	print("started")
+	s.say("hello, I'm your assistant", "happy-1")
+	_listen_publisher = rospy.Publisher("/home_edu_Listen/situation", String, queue_size=1)
 	while True:
 		#frame = c.rgb_image
 		image = c.depth_image
@@ -84,16 +85,15 @@ if __name__ == '__main__':
 			break
 	
 	time.sleep(1)
+	s.say("Please stand in front of me", "happy-1")
 	s.say("please stand still and say follow me")
+	
 	_listen_publisher.publish("true")
-	m = manipulator()
 	
-	goal = [[-1.49, 8.48, 0.00247], [7.51, 7.52, -0.00143], [10.6, -3.76, -0.00143]]
+	goal = [[-3.36, 8.17, 0.0025], [1.9, 5.51, -0.00137], [0.00489, -0.0209, -0.00137]]
 	
-	
-	
-	k = kobuki()
 	flag = 0
+	
 	while True:
 		if msg == 'follow me':
 			flag = 1
@@ -101,7 +101,7 @@ if __name__ == '__main__':
 			flag = 2
 		else:
 			pass
-		print('flag', flag)
+
 		forward_speed, turn_speed = f.follow(c.depth_image, flag==1)
 		k.move(forward_speed, turn_speed)
 		
@@ -123,7 +123,7 @@ if __name__ == '__main__':
 	else:
 		i = 0
 	print(place)
-	s.say("you said" + place)
+	s.say("you said " + place)
 	s.say("please hand me the bag on my robot arm")
 	time.sleep(1)
 	m.reset()
@@ -134,7 +134,8 @@ if __name__ == '__main__':
 	time.sleep(5)
 	m.close()
 	time.sleep(1)
-	s.say("girpped, i am now goin to the location")
+	s.say("gripped, i am now goin to the location")
+	s.say("Please stand away from me", "wink")
 	print(goal[i][0], goal[i][1], goal[i][2])
 	chassis.move_to(goal[i][0], goal[i][1], goal[i][2])
 	s.say("arrived to goal")
@@ -163,7 +164,7 @@ if __name__ == '__main__':
 				k.move(0, -0.3)
 			else:
 				time.sleep(1)
-				s.say("please follow me to the garage")
+				s.say("please follow me to the garage and stand behind me", "wink")
 				chassis.move_to(x, y, z)
 				s.say("arrived to the garage")
 				break
@@ -182,5 +183,6 @@ if __name__ == '__main__':
 		'''
 		cv.waitKey(1)
 	print("end of program")
+	s.say("finished task", "wink")
 
 
