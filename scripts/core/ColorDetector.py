@@ -50,7 +50,7 @@ class ColorDetector(object):
         real_x = 0
         real_y = 0
         real_z = 0
-        \
+        
         
         h, w = depth_image.shape
         flag = False
@@ -105,7 +105,7 @@ if __name__ == "__main__":
 
             rx, ry, rz = detector.physical_distance(camera.depth_image, cx, cy, 30)
             rx = rx + 40
-            # rospy.loginfo("%.1f mm, %.1f mm, %.1f mm" % (rx, ry, rz))
+            rospy.loginfo("%.1f mm, %.1f mm, %.1f mm" % (rx, ry, rz))
             cv.putText(rgb_image, "%.1fcm, %.1fcm, %.1fcm" % (rx/10, ry/10, rz/10),
                        (cx + 20, cy),
                        cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 2,

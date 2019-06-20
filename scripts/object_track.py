@@ -22,7 +22,7 @@ def genderate_mask(size):
             zero[y, x] = dist
     biggest = np.max(zero)
 
-    mask = 1.0 - zero / biggest
+    mask = zero / biggest
     return mask
 
 
@@ -38,8 +38,7 @@ def calc_ph(x, y, center_point):
 
 # Kps for turning and forward
 p1 = 1.0 / 900.0
-p2 = -(1.0 / 900.0)
-turn_p = -(1.0 / 200.0)
+turn_p = -(1.0 / 150.0)
 
 # The nearest distance for the robot between the operator
 horizan = 595
@@ -63,6 +62,7 @@ size = (480, 640)
 min = np.array([0, 48, 80], np.uint8)
 max = np.array([18, 255, 255], np.uint8)
 
+Dist = 0.0
 
 mask = genderate_mask(size)
 
@@ -117,12 +117,8 @@ while not rospy.is_shutdown():
 
         notzero = len(nonzeros[0])
 
-        if (val < 1300) and (val > 440) or (len(frame) - notzero > notzero):
-            if error > 0:
-                forward_speed = calc_kp(val, horizan, p1)
-
-            else:
-                forward_speed = calc_kp(val, horizan, p2)
+        if val < 1300 or (len(frame) - notzero > notzero):
+            forward_speed = calc_kp(val, horizan, p1)
 
             if not minLoc[0] == 0:
                 turn_speed = calc_kp(minLoc[0], center_x, turn_p)
@@ -131,7 +127,7 @@ while not rospy.is_shutdown():
             turn_speed = 0
 
         chassis.move(forward_speed, turn_speed)
-        print("Darkness point: %s, Location: %s, Distance: %s, Speed: %s, Turn: %s, To center: %s" % (val, minLoc, val, forward_speed, turn_speed, Dist))
+        print("Darkness point: %s, Location: %s, Distance: %s, Speed: %s, Turn: %s, To center: %s, error: %s" % (val, minLoc, val, forward_speed, turn_speed, Dist, error))
 
         cv.circle(image, minLoc, 60, (0, 255, 0), 2)
 

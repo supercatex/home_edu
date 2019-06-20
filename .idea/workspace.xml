@@ -3,8 +3,12 @@
   <component name="ChangeListManager">
     <list default="true" id="d904fe41-8673-45a4-8ff8-97f506d55c13" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/PCMS_First_mission.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/PCMS_First_mission.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/core/ColorDetector.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/core/ColorDetector.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/manipulator_track.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/manipulator_track.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/object_track.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/object_track.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/temp.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/temp.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/test.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -13,23 +17,23 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file pinned="false" current-in-tab="false">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/scripts/manipulator_track.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="266">
-              <caret line="48" column="6" selection-start-line="48" selection-start-column="4" selection-end-line="48" selection-end-column="6" />
+            <state relative-caret-position="511">
+              <caret line="151" column="35" selection-start-line="151" selection-start-column="35" selection-end-line="151" selection-end-column="35" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/scripts/core/ColorDetector.py">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/scripts/core/Manipulator.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="190">
-              <caret line="67" column="18" lean-forward="true" selection-start-line="67" selection-start-column="18" selection-end-line="67" selection-end-column="18" />
+            <state relative-caret-position="380">
+              <caret line="84" column="30" lean-forward="true" selection-start-line="84" selection-start-column="30" selection-end-line="84" selection-end-column="30" />
               <folding>
-                <element signature="e#22#34#0" expanded="true" />
+                <element signature="e#22#33#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -91,8 +95,8 @@
         <option value="$PROJECT_DIR$/scripts/PCMS_Second_mission_listen.py" />
         <option value="$PROJECT_DIR$/scripts/core/Follower.py" />
         <option value="$PROJECT_DIR$/scripts/core/PH_Follow_me.py" />
-        <option value="$PROJECT_DIR$/scripts/manipulator_track.py" />
         <option value="$PROJECT_DIR$/scripts/core/ColorDetector.py" />
+        <option value="$PROJECT_DIR$/scripts/manipulator_track.py" />
       </list>
     </option>
   </component>
@@ -119,6 +123,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -131,17 +136,10 @@
               <item name="home_edu" type="462c0819:PsiDirectoryNode" />
               <item name="scripts" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="home_edu" type="b2602c69:ProjectViewProjectNode" />
-              <item name="home_edu" type="462c0819:PsiDirectoryNode" />
-              <item name="scripts" type="462c0819:PsiDirectoryNode" />
-              <item name="core" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -423,14 +421,21 @@
       <option name="project" value="LOCAL" />
       <updated>1560919290413</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="student">
+      <created>1560942698159</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1560942698160</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="64" y="-4" width="1857" height="1085" extended-state="6" />
+    <frame x="64" y="-4" width="1617" height="1055" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.22816594" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.22801508" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -441,7 +446,7 @@
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.32912722" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="8" sideWeight="0.49972543" visible="true" weight="0.2517839" />
+      <window_info anchor="bottom" id="Terminal" order="8" sideWeight="0.49972543" visible="true" weight="0.24500526" />
       <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.5002746" side_tool="true" weight="0.32241014" />
       <window_info anchor="bottom" id="Python Console" order="10" weight="0.32980973" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -585,16 +590,6 @@
           <caret line="30" column="50" selection-start-line="30" selection-start-column="50" selection-end-line="30" selection-end-column="50" />
           <folding>
             <element signature="e#22#36#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/core/Manipulator.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="247">
-          <caret line="149" column="8" selection-start-line="149" selection-start-column="8" selection-end-line="149" selection-end-column="8" />
-          <folding>
-            <element signature="e#22#33#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -765,20 +760,30 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/manipulator_track.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="266">
-          <caret line="48" column="6" selection-start-line="48" selection-start-column="4" selection-end-line="48" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/scripts/core/ColorDetector.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="190">
-          <caret line="67" column="18" lean-forward="true" selection-start-line="67" selection-start-column="18" selection-end-line="67" selection-end-column="18" />
+        <state relative-caret-position="513">
+          <caret line="84" selection-start-line="84" selection-end-line="84" />
           <folding>
             <element signature="e#22#34#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/core/Manipulator.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="380">
+          <caret line="84" column="30" lean-forward="true" selection-start-line="84" selection-start-column="30" selection-end-line="84" selection-end-column="30" />
+          <folding>
+            <element signature="e#22#33#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/manipulator_track.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="511">
+          <caret line="151" column="35" selection-start-line="151" selection-start-column="35" selection-end-line="151" selection-end-column="35" />
         </state>
       </provider>
     </entry>

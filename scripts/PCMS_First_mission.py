@@ -12,7 +12,7 @@ from core import Astra as astra
 from core import Kobuki as kobuki
 # from pyttsx3 import init
 from core import Speaker as speaker
-import data
+import main
 import time
 import speech_recognition as sr
 
@@ -61,19 +61,11 @@ def speech_to_text():
         return "Please ask again"
 
 
-def Answer_question(text):
+def Answer_question(text, database):
     try:
-        for key in data.question.keys():
-            c = key.split(" ")
-            text = text.lower()
-            found_count = 0
-            for i in c:
-                i = i.lower()
-                if i in text:
-                    found_count += 1
-            if found_count == len(c):
-                return data.question[key]
-        return 'Please ask again'
+        text = text.lower()
+        answer = main.answer_question_from_data(text, database)
+        return answer["answer"]
 
     except Exception as e:
         print(e)
@@ -135,7 +127,7 @@ if __name__ == '__main__':
     _detector = dlib.get_frontal_face_detector()
     image_path = "/home/mustar/pcms/src/home_edu/scripts/temp.jpg"
 
-    c = astra("camera")
+    c = astra("top_camera")
     chassis = kobuki()
 
     while True:
@@ -227,11 +219,12 @@ if __name__ == '__main__':
     # Question part
     while not rospy.is_shutdown():
         P.say("Please ask")
+        data = main.load_data
 
         try:
             operator_question = speech_to_text()
 
-            P.say(Answer_question(operator_question))
+            P.say(Answer_question(operator_question, data))
 
         except Exception as e:
             P.say("We've seen an error: {}".format(e))

@@ -9,9 +9,9 @@ import math
 class object_detection(object):
 	def __init__(self, color):
 		
-		self.max_range = 25
+		self.max_range = 20
 		
-		self.mani_length = 33.5
+		self.mani_length = 30
 		
 		self.cameraH = 60 * math.pi / 180
 		
@@ -33,7 +33,6 @@ class object_detection(object):
 		
 		upper = np.array(self.upper, dtype="uint8")
 		
-		print(lower, upper, rgb_image.shape)
 		
 		mask = cv2.inRange(rgb_image, lower, upper)
 		
@@ -51,10 +50,11 @@ class object_detection(object):
 			
 			e = 0
 			
-			y = (y + h/2)
+			y = (y + h / 2)
+
+			x = (x + w / 2)
 			
-			x = (x + w/2)
-			
+			cv2.circle(rgb_image, (x, y), 5, (0, 255, 255), -1)
 			h2, w2 = depth_image.shape
 			
 			real_z = 0
@@ -72,11 +72,10 @@ class object_detection(object):
 			
 			mid = [x, y, z]
 		
-		print('mid:', mid)
-		return rgb_image, mid
+		print('middle_virture:', mid)
+		return rgb_image, mid, y - h  /2
 
 	def calculation(self, mid):
-		l = self.mani_length
 		x0 = mid[0]
 		y0 = mid[1]
 		z0 = mid[2]/10
@@ -85,23 +84,40 @@ class object_detection(object):
 		# y1 = y0
 		# z1 = x0
 
-		wR = 2 * z0 * math.tan(self.cameraH / 2)
+		wR = 2 * z0 * math.tan(self.cameraH/2)
 		hR = 2 * z0 * math.tan(self.cameraV/2)
-		print("Real W, h", wR, hR)
-		xR = (wR * x0)/640
-		yR = (hR * y0)/480
+		xR = (wR * x0)/640 - wR/2
+		yR = (hR * y0)/480 - hR/2
 		zR = z0
 		
-		print("Real x, y, z", xR, yR, zR)
+		print("Real x, y, z, w, h", xR, yR, zR, wR, hR)
 		return xR, yR, zR
+	
+	def physical_distance(self, x, y, z):
+		y0 = (36.5 - y)
+		x0 = z - 18
+		z0 = -x
+
+		l = self.mani_length
+		alpha = math.atan2(y0, math.sqrt(x0 * x0 + z0 * z0))
+		beta = math.atan2(z0, x0)
+		print(alpha, beta)
+
+		l0 = l * math.cos(alpha)
+		Px = l0 * math.cos(beta)
+		Py = l * math.sin(alpha)
+		Pz = l0 * math.sin(beta)
 		
-	def 
+		return Px, Py, Pz, alpha
+		
 	def run(self, rgb_image, depth_image):
-		frame, mid = self.color_detect(rgb_image, depth_image)
+		frame, mid, y0 = self.color_detect(rgb_image, depth_image)
 		
-		x, y, z = self.calculation(mid)
+		Rx, Ry, Rz = self.calculation(mid)
 		
-		return frame, x, y, z
+		x, y, z, a = self.physical_distance(Rx, Ry, Rz)
+		
+		return frame, x, y, z, a
 		
 		
 		
@@ -120,11 +136,20 @@ if __name__ == "__main__":
 
 		frame, image = c.depth_image, c.rgb_image
 		
-		image, x, y, z = obj.run(c.rgb_image, c.depth_image)
+		image, x, y, z, alpha = obj.run(c.rgb_image, c.depth_image)
+		
+		if x * x + y * y + z * z> obj.mani_length:
+			print("OVER")
+			pass
+		else:
+			pass
+			
 
 		cv2.imshow("image", image)
 		
-		print(x, y, z)
+		print('mani x, y, z:', x, y, z, -(alpha * 180 / math.pi))
+		
+		m.exec_servos_pos(x, y, z, -(alpha * 180 / math.pi))
 
 		if cv2.waitKey(1) in [ord('q'), 27]:
 			break
