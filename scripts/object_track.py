@@ -37,8 +37,8 @@ def calc_ph(x, y, center_point):
 
 
 # Kps for turning and forward
-p1 = 1.0 / 1200.0
-p2 = -(1.0 / 1200.0)
+p1 = 1.0 / 900.0
+p2 = -(1.0 / 900.0)
 turn_p = -(1.0 / 200.0)
 
 # The nearest distance for the robot between the operator
@@ -70,7 +70,9 @@ cv.namedWindow("frame")
 cv.setMouseCallback("frame", c.mouse_callback)
 
 while not rospy.is_shutdown():
-    frame, image = c.depth_image, c.rgb_image
+    depth, image = c.depth_image, c.rgb_image
+    
+    frame = depth[0:(480 - 1), ((640 / 5) - 1):((640 * 4) - 1)].copy()
 
     blurred_frame = cv.GaussianBlur(image, (5, 5), 0)
 
@@ -115,7 +117,7 @@ while not rospy.is_shutdown():
 
         notzero = len(nonzeros[0])
 
-        if (val < 1370) and (val > 440) or (len(frame) - notzero > notzero):
+        if (val < 1300) and (val > 440) or (len(frame) - notzero > notzero):
             if error > 0:
                 forward_speed = calc_kp(val, horizan, p1)
 
@@ -134,6 +136,7 @@ while not rospy.is_shutdown():
         cv.circle(image, minLoc, 60, (0, 255, 0), 2)
 
     cv.imshow("frame", image)
+    cv.imshow("depth", frame)
 
     if cv.waitKey(1) in [ord('q'), 27]:
         break
