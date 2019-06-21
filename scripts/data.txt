@@ -174,7 +174,7 @@ What is the AI knowledge engineering bottle-neck?
 It is when you need to load an AI with enough knowledge to start learning.
 knowledge, bottle, neck
 
-Why is Elon Musk is worried about AI's impact on humanity?
+Why is Elon Musk is worried about AIs impact on humanity?
 I don't know. He should worry more about the people's impact on humanity.
 worried, impact
 
