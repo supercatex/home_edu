@@ -58,9 +58,10 @@ question =	{
 # New question keyword structure
 data = []
 
-def load_data():
+
+def load_data(path):
     situation = 0
-    file = open("data.txt")
+    file = open(path)
     
     for ds in file.readlines():
         if ds == "\n":
@@ -96,13 +97,21 @@ def answer_question_from_data(text, database):
         for keys in d["keyword"]:
             t_or = False
             for key in keys:
-                if key.lower() in text.lower().strip().split(" "):
-                    t_or = True
-                    break
-
+                if key[0] != "!":
+                    if key.lower() in text.lower().strip().split(" "):
+                        t_or = True
+                        break
+    
+                    else:
+                        t_or = False
                 else:
-                    t_or = False
-        
+                    if not key.lower() in text.lower().strip().split(" "):
+                        t_or = True
+                        break
+    
+                    else:
+                        t_or = False
+                
             if not t_or:
                 t_and = False
     

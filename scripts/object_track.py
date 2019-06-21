@@ -71,8 +71,8 @@ cv.setMouseCallback("frame", c.mouse_callback)
 
 while not rospy.is_shutdown():
     depth, image = c.depth_image, c.rgb_image
-    
-    frame = depth[0:(480 - 1), ((640 / 5) - 1):((640 * 4) - 1)].copy()
+
+    frame = depth[0:(480 - 1), ((640 / 4) - 1):((640 * 3) - 1)].copy()
 
     blurred_frame = cv.GaussianBlur(image, (5, 5), 0)
 
@@ -133,6 +133,7 @@ while not rospy.is_shutdown():
 
     cv.imshow("frame", image)
     cv.imshow("depth", frame)
+    cv.imshow('mask', mask)
 
     if cv.waitKey(1) in [ord('q'), 27]:
         break

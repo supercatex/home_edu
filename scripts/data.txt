@@ -71,7 +71,7 @@ else, Montreal
 
 Where is The Hotel de Glace located?
 The Hotel de Glace is in Quebec.
-located, locate
+located, locate, location
 
 How many tons of ice are required to build The Hotel de Glace?
 The Hotel de Glace requires about 400 tons of ice.
@@ -114,12 +114,12 @@ origin, comic
 What is a nanobot?
 The smallest robot possible is called a nanobot.
 what
-nanobot
+nanobot, honorable, nano, edible, iRobot, ozobot, ionic bond, logo, notebook,  lullaby, nanobots
 
 How small can a nanobot be?
 A nanobot can be less than one-thousandth of a millimeter.
 small
-nanobot
+nanobot, honorable, nano, edible, iRobot, ozobot, ionic bond, logo, notebook,  lullaby, nanobots
 
 Why wasn't Tron nominated for an award by The Motion Picture Academy?
 The Academy thought that Tron cheated by using computers.
@@ -191,11 +191,12 @@ self, driving, cars, car
 
 Who invented the compiler?
 Grace Hoper. She wrote it in her spare time.
-invented, compiler
+who
+compiler
 
 Who created the C Programming Language?
 C was invented by Dennis MacAlistair Ritchie.
-C
+C, see
 programming, language
 
 Who created the Python Programming Language?

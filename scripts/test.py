@@ -1,16 +1,20 @@
 #!/usr/bin/env python
 
-import cv2 as cv
-
-from core import Astra as astra
+from random import randint
 import rospy
+import time 
 
 rospy.init_node("pcms_test", anonymous=True)
 
 rate = rospy.Rate(20)
 
-c = astra("top_camera")
-
-frame = c.rgb_image
-
-
+while True:
+	random_num = randint(90, 100)
+	print(random_num)
+	if random_num > 90:
+		last_time = time.time()
+		if time.time() - last_time >= 5:
+			break
+				
+	else:
+		pass

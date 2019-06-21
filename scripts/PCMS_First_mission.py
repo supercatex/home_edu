@@ -15,6 +15,7 @@ from core import Speaker as speaker
 import main
 import time
 import speech_recognition as sr
+from random import randint
 
 # import os
 
@@ -45,26 +46,30 @@ def turn_180_degree(chassis):
     else:
         return 0
 
+#
+# def speech_to_text():
+#     global r
+#
+#     try:
+#         with sr.Microphone() as source:
+#             audio = r.listen(source)
+#         text = r.recognize_google(audio, language="en-US")
+#         P.say("You said, {}".format(text))
+#         return text
+#     except Exception as e:
+#         # r = sr.Recognizer()
+#         print(e)
+#         return "Please ask again"
 
-def speech_to_text():
-    global r
 
+def Answer_question(audio, database):
     try:
-        with sr.Microphone() as source:
-            audio = r.listen(source)
-        text = r.recognize_google(audio, language="en-US")
-        P.say("You said, {}".format(text))
-        return text
-    except Exception as e:
-        # r = sr.Recognizer()
-        print(e)
-        return "Please ask again"
-
-
-def Answer_question(text, database):
-    try:
-        text = text.lower()
-        answer = main.answer_question_from_data(text, database)
+        answer = main.answer_question_from_data(audio, database)
+        print(answer)
+        if answer['question'] == '' and answer['answer'] == '':
+            P.say("You said: {}".format(audio))
+            return 'Please ask again'
+        P.say("You said: %s" % (answer['question']))
         return answer["answer"]
 
     except Exception as e:
@@ -219,17 +224,13 @@ if __name__ == '__main__':
     # Question part
     while not rospy.is_shutdown():
         P.say("Please ask")
-        data = main.load_data
-
+        data = main.load_data("/home/mustar/pcms/src/home_edu/scripts/data.txt")
         try:
-            operator_question = speech_to_text()
-
-            P.say(Answer_question(operator_question, data))
+            with sr.Microphone() as source:
+                audio = r.listen(source)
+            
+            text = r.recognize_google(audio, language="en-US")
+            P.say(Answer_question(text, data), f1="happy-%s" % (randint(1, 4)))
 
         except Exception as e:
             P.say("We've seen an error: {}".format(e))
-        #
-        # if Question_count == 5:
-        #     break
-        #
-        # Question_count += 1
