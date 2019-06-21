@@ -48,7 +48,6 @@ class object_detection(object):
 
 			self.area = area
 
-			print(area)
 			x, y, w, h = cv2.boundingRect(c)
 
 			cv2.rectangle(rgb_image, (x, y), (x + w, y + h), (0, 255, 0), 3)
@@ -139,32 +138,49 @@ if __name__ == "__main__":
 
 	signal = True
 
+	m.reset()
+	
+	m.wait()
+	
+	m.open()
 	while not rospy.is_shutdown():
- 
+	
+		print(obj.area)
 		frame, image = c.depth_image, c.rgb_image
 
 		image, x, y, z, alpha = obj.run(c.rgb_image, c.depth_image)
-
-		if obj.area < 500 or obj.area is None:
-			
-			start_time = time.time()
-			
-			if time.time() - start_time >= 2:
-			
+		
+		if signal == True:
+			if obj.area < 500 or obj.area is None:
 				signal = False
-			
+				start_time = time.time()
+				continue 
 			else:
-				
+				m.exec_servos_pos(x, y, z, -60)
+				cv2.imshow("image", image)
+				print('mani x, y, z:', x, y, z, -60)
 				continue
 		else:
-
-			m.exec_servos_pos(x, y, z, -60)
-
-			cv2.imshow("image", image)
-
-			print('mani x, y, z:', x, y, z, -60)
+			if obj.area < 500 or obj.area is None:
+				if time.time() - start_time > 3: 
+					break
+				else:
+					continue
+			else:
+				signal = True 
+				continue
 
 		if cv2.waitKey(1) in [ord('q'), 27]:
 			break
+	
+	print("end loop")
+
+	time.sleep(2)
+	
+	m.close()
+	
+	m.exec_servos_pos(15,25,0,-60)
+	
+	
 
 cv2.destroyAllWindows()

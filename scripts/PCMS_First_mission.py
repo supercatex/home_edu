@@ -69,6 +69,7 @@ def Answer_question(audio, database):
         if answer['question'] == '' and answer['answer'] == '':
             P.say("You said: {}".format(audio))
             return 'Please ask again'
+        print("Origin: {}".format(audio))
         P.say("You said: %s" % (answer['question']))
         return answer["answer"]
 
