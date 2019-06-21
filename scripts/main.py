@@ -104,8 +104,8 @@ def answer_question_from_data(text, database):
     
                     else:
                         t_or = False
-                else:
-                    if not key.lower() in text.lower().strip().split(" "):
+                elif key[0] == "!":
+                    if not key.lower().replace("!", "") in text.lower().strip().split(" "):
                         t_or = True
                         break
     
@@ -136,7 +136,7 @@ if __name__ == '__main__':
 
     _r = sr.Recognizer()
 
-    data = load_data()
+    data = load_data("./data.txt")
     
     while True:
         with sr.Microphone() as source:
@@ -147,6 +147,7 @@ if __name__ == '__main__':
         question = _r.recognize_google(audio, language="en-US")
         answer = answer_question_from_data(question, data)
         print("OK")
+        print("Origin: {}".format(question))
         engine.say("You said: %s" % answer["question"])
         print(answer["question"])
         engine.say(answer["answer"])
