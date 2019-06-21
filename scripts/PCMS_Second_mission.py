@@ -16,6 +16,7 @@ from turtlebot_msgs.srv import SetFollowState
 from core import GenderDetection as Gender
 from core import Manipulator as manipulator
 from core import PH_Follow_me as PH_Follow_me
+from manipulator_track import manipulator_track as manipulator_track
 
 publisher = rospy.Publisher(
 	"/home_edu/facial",
@@ -72,6 +73,8 @@ if __name__ == '__main__':
 	f = PH_Follow_me()
 	m = manipulator()
 	k = kobuki()
+	obj = manipulator_track("red")
+	m.exec_servos_pos(10,15,0,-30)
 	print("started")
 	s.say("hello, I'm your assistant", "happy-1")
 	_listen_publisher = rospy.Publisher("/home_edu_Listen/situation", String, queue_size=1)
@@ -122,16 +125,51 @@ if __name__ == '__main__':
 		i = 0
 	print(place)
 	s.say("you said " + place)
-	s.say("please hand me the bag on my robot arm")
 	time.sleep(1)
-	m.reset()
 	m.wait()
-	m.exec_servos_pos(10,20,0,0)
-	m.wait()
+	s.say("please start the bag gripping task")
+
+	signal = True
+	
 	m.open()
-	time.sleep(5)
-	m.close()
+	while not rospy.is_shutdown():
+	
+		print(obj.area)
+		frame, image = c.depth_image, c.rgb_image
+
+		image, x, y, z, alpha = obj.run(c.rgb_image, c.depth_image)
+		
+		if signal == True:
+			if obj.area < 1500 or obj.area is None:
+				signal = False
+				start_time = time.time()
+				continue 
+			else:
+				m.exec_servos_pos(x, y, z, -60)
+				cv.imshow("image", image)
+				print('mani x, y, z:', x, y, z, -60)
+				continue
+		else:
+			if obj.area < 1500 or obj.area is None:
+				if time.time() - start_time > 3: 
+					break
+				else:
+					continue
+			else:
+				signal = True 
+				continue
+
+		if cv.waitKey(1) in [ord('q'), 27]:
+			break
+	
+	print("end simulate")
+
 	time.sleep(1)
+	
+	m.close()
+	
+	m.exec_servos_pos(15,25,0,-60)
+	
 	s.say("gripped, i am now goin to the location")
 	s.say("Please stand away from me", "wink")
 	print(goal[i][0], goal[i][1], goal[i][2])

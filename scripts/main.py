@@ -68,7 +68,7 @@ def load_data(path):
             situation = 1
             continue
         
-        elif situation == 1:
+        if situation == 1:
             data.append({
                 "question": "",
                 "answer": "",
@@ -86,13 +86,14 @@ def load_data(path):
             for k in range(len(keyword)):
                 keyword[k] = keyword[k].strip()
             data[-1]["keyword"].append(keyword)
-                
+            
     file.close()
     return data
     
 
 def answer_question_from_data(text, database):
     for d in database:
+        print(d)
         t_and = True
         for keys in d["keyword"]:
             t_or = False
@@ -105,7 +106,7 @@ def answer_question_from_data(text, database):
                     else:
                         t_or = False
                 elif key[0] == "!":
-                    if not key.lower().replace("!", "") in text.lower().strip().split(" "):
+                    if key.lower().replace("!", "") not in text.lower().strip().split(" "):
                         t_or = True
                         break
     
@@ -136,8 +137,14 @@ if __name__ == '__main__':
 
     _r = sr.Recognizer()
 
-    data = load_data()
+    data = load_data("/home/mustar/pcms/src/home_edu/scripts/data.txt")
     
+    text = "why is Elon Musk is worried about a ice cream PetSmart"
+    answer = answer_question_from_data(text, data)
+    print(answer)
+    
+    
+    '''
     while True:
         with sr.Microphone() as source:
             print("Preparing:")
@@ -152,3 +159,4 @@ if __name__ == '__main__':
         engine.say(answer["answer"])
         print(answer["answer"])
         engine.runAndWait()
+    '''

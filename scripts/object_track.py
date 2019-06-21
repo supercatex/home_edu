@@ -72,7 +72,7 @@ cv.setMouseCallback("frame", c.mouse_callback)
 while not rospy.is_shutdown():
     depth, image = c.depth_image, c.rgb_image
 
-    frame = depth[0:(480 - 1), ((640 / 4) - 1):((640 * 3) - 1)].copy()
+    frame = depth[0:480, (640 / 4):(640 * 3)].copy()
 
     blurred_frame = cv.GaussianBlur(image, (5, 5), 0)
 
@@ -130,6 +130,7 @@ while not rospy.is_shutdown():
         print("Darkness point: %s, Location: %s, Distance: %s, Speed: %s, Turn: %s, To center: %s, error: %s" % (val, minLoc, val, forward_speed, turn_speed, Dist, error))
 
         cv.circle(image, minLoc, 60, (0, 255, 0), 2)
+        cv.circle(image, minLoc, 6, (0, 255, 255), 2)
 
     cv.imshow("frame", image)
     cv.imshow("depth", frame)

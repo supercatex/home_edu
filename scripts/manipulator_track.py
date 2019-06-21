@@ -8,7 +8,7 @@ import math
 import time
 
 
-class object_detection(object):
+class manipulator_track(object):
 	def __init__(self, color):
 		self.area = 10
 
@@ -134,7 +134,7 @@ if __name__ == "__main__":
 
 	m = Manipulator()
 
-	obj = object_detection("red")
+	obj = manipulator_track("red")
 
 	signal = True
 
