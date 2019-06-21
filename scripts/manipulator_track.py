@@ -151,7 +151,7 @@ if __name__ == "__main__":
 		image, x, y, z, alpha = obj.run(c.rgb_image, c.depth_image)
 		
 		if signal == True:
-			if obj.area < 500 or obj.area is None:
+			if obj.area < 1500 or obj.area is None:
 				signal = False
 				start_time = time.time()
 				continue 
@@ -161,7 +161,7 @@ if __name__ == "__main__":
 				print('mani x, y, z:', x, y, z, -60)
 				continue
 		else:
-			if obj.area < 500 or obj.area is None:
+			if obj.area < 1500 or obj.area is None:
 				if time.time() - start_time > 3: 
 					break
 				else:

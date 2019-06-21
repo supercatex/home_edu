@@ -104,8 +104,8 @@ def answer_question_from_data(text, database):
     
                     else:
                         t_or = False
-                else:
-                    if not key.lower() in text.lower().strip().split(" "):
+                elif key[0] == "!":
+                    if not key.lower().replace("!", "") in text.lower().strip().split(" "):
                         t_or = True
                         break
     
