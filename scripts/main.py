@@ -92,25 +92,21 @@ def load_data(path):
     
 
 def answer_question_from_data(text, database):
-    print(text)
     for d in database:
         t_and = True
         for keys in d["keyword"]:
             t_or = False
             for key in keys:
-                print(key)
                 if key[0] != "!":
                     if key.lower() in text.lower().strip().split(" "):
                         t_or = True
-                        print(": yes")
                         break
     
                     else:
                         t_or = False
-                elif key[0] == "!":
-                    if not key.lower() in text.lower().strip().replace("!", '').split(" "):
+                else:
+                    if not key.lower() in text.lower().strip().split(" "):
                         t_or = True
-                        print(": no")
                         break
     
                     else:
