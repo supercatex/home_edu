@@ -93,9 +93,9 @@ def load_data(path):
 
 def answer_question_from_data(text, database):
     for d in database:
-        print(d)
+        data = d
         t_and = True
-        for keys in d["keyword"]:
+        for keys in data["keyword"]:
             t_or = False
             for key in keys:
                 if key[0] != "!":
@@ -117,7 +117,7 @@ def answer_question_from_data(text, database):
                 t_and = False
     
         if t_and:
-            return d
+            return data
     
     return {"question": "", "answer": "", "keyword": []}
             
@@ -125,6 +125,7 @@ def answer_question_from_data(text, database):
 if __name__ == '__main__':
     import speech_recognition as sr
     import pyttsx3
+    from os.path import abspath
     
     engine = pyttsx3.init()
     
@@ -137,9 +138,9 @@ if __name__ == '__main__':
 
     _r = sr.Recognizer()
 
-    data = load_data("/home/mustar/pcms/src/home_edu/scripts/data.txt")
+    data = load_data(abspath("./data.txt"))
     
-    text = "why is Elon Musk is worried about a ice cream PetSmart"
+    text = "How many tons of snow are required to build The Hotel de Glace?"
     answer = answer_question_from_data(text, data)
     print(answer)
     
