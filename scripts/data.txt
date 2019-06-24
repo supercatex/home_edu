@@ -30,12 +30,12 @@ largest
 coin, corn
 
 In what year was Canada invaded by the USA for the first time?
-The first time that the USA invaded Canada was in 1775.
+The first time that the USA invaded Canada was in 17 75.
 USA
 first
 
 What year was Canada invaded by the USA for the second time?
-The USA invaded Canada a second time in 1812.
+The USA invaded Canada a second time in 18 12.
 USA
 second
 
@@ -53,12 +53,12 @@ Canada
 named, name
 
 When was The Mounted Police formed?
-The Mounted Police was formed in 1873.
+The Mounted Police was formed in 18 73.
 police
 !Canadian
 
 When was The Royal Canadian Mounted Police formed?
-In 1920, when The Mounted Police merged with the Dominion Police.
+In 19 20, when The Mounted Police merged with the Dominion Police.
 Canadian
 police
 
@@ -76,14 +76,12 @@ located, locate, location
 
 How many tons of ice are required to build The Hotel de Glace?
 The Hotel de Glace requires about 400 tons of ice.
-ice
-required
+ice, required
 !snow
 
 How many tons of snow are required to build The Hotel de Glace?
 Every year, 12000 tons of snow are used for The Hotel de Glace.
-snow
-required
+snow, required
 !ice
 
 Can I visit the Hotel de Glace in summer?
@@ -132,7 +130,7 @@ which
 computer
 
 When was the first computer with a hard disk drive launched?
-The IBM 305 RAMAC was launched in 1956.
+The IBM 305 RAMAC was launched in 19 56.
 when
 computer
 
@@ -222,3 +220,7 @@ programmer
 Which program do Jedi use to open PDF files?
 Adobe Wan Kenobi.
 PDF
+
+Stop, please, the test has finished
+Ok, I will stop right now
+stop, please, finished

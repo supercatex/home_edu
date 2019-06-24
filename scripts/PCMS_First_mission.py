@@ -17,7 +17,7 @@ import time
 import speech_recognition as sr
 from random import randint
 
-# import os
+import os
 
 
 def ambient_noice():
@@ -127,7 +127,6 @@ if __name__ == '__main__':
         '/home/mustar/pcms/src/home_edu/scripts/libs/gender_net.caffemodel'
     )
 
-
     rate = rospy.Rate(20)
 
     _detector = dlib.get_frontal_face_detector()
@@ -140,14 +139,15 @@ if __name__ == '__main__':
         a = turn_180_degree(chassis)
         #a = 0
         if a == 0:
-            P.say("Hello, may I have your attention please? I am going to take a photo for you, please ready")
+            P.say("Hello, may I have your attention please? I am going to take a photo for you, please be ready")
             time.sleep(2)
-            P.say("Please look at my top camera. Ready? 3, 2, 1, chieese")
+            P.say("Please look at my top camera which is with a red light. Ready? 3, 2, 1, chieese")
             frame = c.rgb_image
-            image = cv.resize(frame, (1210, 910))
+            image = cv.resize(frame, (1280, 960))
             time.sleep(1)
             cv.imwrite("/home/mustar/pcms/src/home_edu/scripts/temp.jpg", image)
-            P.say("I've just take a photo of you")
+            P.say("I've just take a photo for you")
+            P.say("I will use red rectangles for women and blue rectangles for man")
             break
 
     # if c.rgb_image is None or c.depth_image is None:
@@ -177,6 +177,7 @@ if __name__ == '__main__':
         face_count += 1
         # print(y1, y2, x1, x2)
         face_img = image[y1:y2, x1:x2].copy()
+        face_img = cv.resize(face_img, (227, 227))
         # print(face_img.shape)
         # cv.imshow("face_img", face_img)
         # cv.waitKey(0)
@@ -213,8 +214,22 @@ if __name__ == '__main__':
     # if cv.waitKey(1) == ord('q'):
         # break
     # rate.sleep()
+    
+    report = ""
 
-    P.say("I see {} person, {} man, and {} women in this picture".format(str(face_count), str(male_count), str(female_count)))
+    if male_count > 0 and female_count > 0:
+        report = "I see {} person, {} man, and {} women in this picture".format(str(face_count), str(male_count), str(female_count))
+    
+    elif face_count == 0:
+        report = "I can't see anyone in this picture"
+    
+    elif male_count == 0:
+        report = "I see {} person, {} women, and no man in this picture".format(str(face_count), str(female_count))
+    
+    elif female_count == 0:
+        report = "I see  {} person, {} man, and no women in this picture".format(str(face_count), str(male_count))
+        
+    P.say(report)
 
     cv.destroyAllWindows()
 
@@ -231,7 +246,15 @@ if __name__ == '__main__':
                 audio = r.listen(source)
             
             text = r.recognize_google(audio, language="en-US")
-            P.say(Answer_question(text, data), f1="happy-%s" % (randint(1, 4)))
+            answer = Answer_question(text, data)
+            P.say(answer, f1="happy-%s" % (randint(1, 4)))
+            
+            if answer == 'Ok, I will stop right now':
+                os.system("pkill -9 python")
+                break
 
-        except Exception as e:
-            P.say("We've seen an error: {}".format(e))
+        except sr.RequestError:
+            P.say("Google has offline", f1="unhappy")
+            
+        except sr.UnknownValueError:
+            P.say("We're sorry, but we can't hear your voice", f1="unhappy")
