@@ -78,7 +78,7 @@ if __name__ == '__main__':
     m.exec_servos_pos(10, 15, 0, -30)
     print("started")
     s.say("hello, I'm your assistant", "happy-1")
-    _listen_publisher = rospy.Publisher("/home_edu_Listen/situation", String, queue_size=1)
+    _listen_publisher = rospy.Publisher("/home_edu_Listen/agent", String, queue_size=1)
     while True:
         # frame = c.rgb_image
         status = depth_detect(c.depth_image)

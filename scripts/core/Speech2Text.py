@@ -24,11 +24,11 @@ sudo python setup.py install
 
 class Speech2Text(object):
 
-	def __init__(self, lang="en-US"):
+	def __init__(self, lang="en-US", topic="/home_edu/facial"):
 		self.lang = lang
 		self.recognizer = speech_recognition.Recognizer()  
-		self.publisher = rospy.Publisher(
-			"/home_edu/facial",
+		self.publisher =     rospy.Publisher(
+			topic,
 			String,
 			queue_size=1,
 			latch=True
