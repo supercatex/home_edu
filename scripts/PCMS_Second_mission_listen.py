@@ -25,4 +25,3 @@ while True:
 		my_publisher.publish(msg)
 	else:
 		pass
-	

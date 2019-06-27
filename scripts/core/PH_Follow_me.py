@@ -9,9 +9,8 @@ from math import sqrt
 class PH_Follow_me(object):
     def __init__(self):
         # Kps for turning and forward
-        self.p1 = 1.0 / 1400.0
-        self.p2 = -(1.0 / 1400.0)
-        self.turn_p = -(1.0 / 320.0)
+        self.p1 = 1.0 / 900.0
+        self.turn_p = -(1.0 / 150.0)
 
         # The nearest distance for the robot between the operator
         self.horizan = 595
@@ -44,45 +43,44 @@ class PH_Follow_me(object):
         return sqrt((center_point[1] - x) ** 2 + (center_point[0] - y) ** 2)  # center_point format: (y, x)
 
 	# CAUTION!!! The image is DEPTH image!!!
-    def follow(self, frame, flag):
-		if flag:
-			zeros = np.nonzero(frame)
-			if len(zeros[0]) > 0:
-				val = np.min(frame[zeros])
-				n = np.where(np.logical_and(frame <= val, frame > 0))
-
-				self.most_center_point = (0, 0)
-				self.most_center_dis = 0
-
-				for locations in range(len(n[0])):
-					x, y = n[1][locations], n[0][locations]
-					Dist = self.calc_ph(x, y, self.center_point)
-					if not Dist > 400:
-						if self.most_center_point == (0, 0) and self.most_center_dis == 0:
-							self.most_center_point = x, y
-							self.most_center_dis = Dist
-						if Dist < self.most_center_dis:
-							self.most_center_point = x, y
-							self.most_center_dis = Dist
-
-				minLoc = (self.most_center_point[0], self.most_center_point[1])
-
-				error = (val - self.horizan)
-
-				if val < 1370:
-					if error > 0:
-						self.forward_speed = self.calc_kp(val, self.horizan, self.p1)
-
-					else:
-						self.forward_speed = self.calc_kp(val, self.horizan, self.p2)
-
-					if minLoc[0] != 0:
-						self.turn_speed = self.calc_kp(minLoc[0], self.center_x, self.turn_p)
-					else:
-						self.turn_speed = 0
-				else:
-					self.forward_speed = 0
-					self.turn_speed = 0
-
-			return self.forward_speed, self.turn_speed
-		return 0, 0
+    def follow(self, depth, flag):
+        if flag:
+            frame = depth[0:480, (640 / 4):(640 * 3)].copy()
+            nonzeros = np.nonzero(frame)
+            if len(nonzeros[0]) > 0:
+                if len(nonzeros[0]) > 0:
+                    val = np.min(frame[nonzeros])
+                    n = np.where(np.logical_and(frame <= val + 30, frame > 0))
+                    # print(n)
+        
+                    self.most_center_point = (0, 0)
+                    self.most_center_dis = 0
+                    for locations in range(len(n[0])):
+                        x, y = n[1][locations], n[0][locations]
+                        Dist = self.calc_ph(x, y, self.center_point)
+                        if Dist < 250:
+                            if self.most_center_point == (0, 0) and self.most_center_dis == 0:
+                                self.most_center_point = x, y
+                                self.most_center_dis = Dist
+                            if Dist < self.most_center_dis:
+                                self.most_center_point = x, y
+                                self.most_center_dis = Dist
+                        else:
+                            pass
+        
+                    minLoc = (self.most_center_point[0], self.most_center_point[1])
+        
+                    # error = (val - horizan)
+        
+                    notzero = len(nonzeros[0])
+        
+                    if val < 1300 or (len(frame) - notzero > notzero):
+                        self.forward_speed = self.calc_kp(val, self.horizan, self.p1)
+            
+                        if not minLoc[0] == 0:
+                            self.turn_speed = self.calc_kp(minLoc[0], self.center_x, self.turn_p)
+                    else:
+                        self.forward_speed = 0
+                        self.turn_speed = 0
+            return self.forward_speed, self.turn_speed
+        return 0, 0

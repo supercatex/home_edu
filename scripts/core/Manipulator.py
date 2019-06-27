@@ -41,7 +41,7 @@ class Manipulator(object):
     
     # Reset arm to default pose.
     def reset(self):
-        self.exec_servos_pos(0, Manipulator.HAND_LENGTH + Manipulator.ARM_LENGTH * 2, 0, -90)
+        self.exec_servos_pos(0, Manipulator.HAND_LENGTH + Manipulator.ARM_LENGTH * 2, 0, -90, 2)
         self.close()
         self.wait()
         print("Manipulator is ready.")

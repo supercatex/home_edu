@@ -127,60 +127,64 @@ class manipulator_track(object):
     
 
 if __name__ == "__main__":
-	rospy.init_node("home_edu_manipulator_track", anonymous=True)
-	rate = rospy.Rate(20)
+    rospy.init_node("home_edu_manipulator_track", anonymous=True)
+    rate = rospy.Rate(20)
+    
+    c = astra("top_camera")
+    
+    m = Manipulator()
+    
+    obj = manipulator_track("red")
+    
+    signal = True
+    
+    m.reset()
+    
+    #m.wait()
+    
+    #m.open()
+    while rospy.is_shutdown():
+    
+        print(obj.area)
+        frame, image = c.depth_image, c.rgb_image
+    
+        image, x, y, z, alpha = obj.run(c.rgb_image, c.depth_image)
+        
+        cv2.imshow("image", image)
+        cv2.waitKey(1)
+        if signal == True:
+            if obj.area < 15000 or obj.area is None:
+                signal = False
+                start_time = time.time()
+                continue
+            else:
+                m.exec_servos_pos(x, y, z, -60)
+                print('mani x, y, z:', x, y, z, -60)
+                continue
+        else:
+            if obj.area < 15000 or obj.area is None:
+                if time.time() - start_time > 3:
+                    break
+                else:
+                    continue
+            else:
+                signal = True
+                continue
+    
+    
+    print("end loop")
+    
+    time.sleep(1)
+    
+    #m.close()
+    
+    m.reset()
+    m.wait()
+    
+    m.exec_servos_pos(10, 20, 1, -45)
+    m.wait()
+    m.exec_servos_pos(-1, 25,  -15, -45)
+    m.wait()
 
-	c = astra("top_camera")
-
-	m = Manipulator()
-
-	obj = manipulator_track("red")
-
-	signal = True
-
-	m.reset()
-	
-	m.wait()
-	
-	m.open()
-	while not rospy.is_shutdown():
-	
-		print(obj.area)
-		frame, image = c.depth_image, c.rgb_image
-
-		image, x, y, z, alpha = obj.run(c.rgb_image, c.depth_image)
-		
-		if signal == True:
-			if obj.area < 1500 or obj.area is None:
-				signal = False
-				start_time = time.time()
-				continue
-			else:
-				m.exec_servos_pos(x, y, z, -60)
-				cv2.imshow("image", image)
-				print('mani x, y, z:', x, y, z, -60)
-				continue
-		else:
-			if obj.area < 1500 or obj.area is None:
-				if time.time() - start_time > 3:
-					break
-				else:
-					continue
-			else:
-				signal = True
-				continue
-
-		if cv2.waitKey(1) in [ord('q'), 27]:
-			break
-	
-	print("end loop")
-
-	time.sleep(2)
-	
-	m.close()
-	
-	m.exec_servos_pos(15,25,0,-60)
-	
-	
 
 cv2.destroyAllWindows()
