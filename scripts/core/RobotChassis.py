@@ -27,7 +27,7 @@ roslaunch turtlebot_rviz_launchers view_navigation.launch --screen
 '''
 
 
-class RobotChassis:
+class RobotChassis: 
     
     # Constructor:
     def __init__(self, frame_id="map"):

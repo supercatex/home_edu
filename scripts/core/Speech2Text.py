@@ -35,21 +35,21 @@ class Speech2Text(object):
             latch=True
         )
     
-    def ambient_noise(self):
+    def ambient_noise(self, duration=1):
         with speech_recognition.Microphone() as source:
-            self.recognizer.adjust_for_ambient_noise(source)
+            self.recognizer.adjust_for_ambient_noise(source, duration=duration)
     
     def listen(self, msg1="listening", msg2="processing", msg3="finished", f1="smiling", f2="suspicious", f3="smart", keep_message=False):
         try:
             with speech_recognition.Microphone() as source:
-                cmd = self.unitid + ":" + f1 + ":" + msg1
+                cmd = f1 + ":" + msg1
                 self.publisher.publish(cmd)
                 audio = self.recognizer.listen(source)
                 print("Got the audio.")
-            cmd = self.unitid + ":" + f2 + ":" + msg2
+            cmd = f2 + ":" + msg2
             self.publisher.publish(cmd)
             text = self.recognizer.recognize_google(audio, language=self.lang)
-            cmd = self.unitid + ":" + f3 + ":" + text
+            cmd = f3 + ":" + text
             self.publisher.publish(cmd)
             return text
         except Exception as e:

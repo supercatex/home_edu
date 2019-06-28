@@ -1,11 +1,13 @@
-#!/usr/bin/env python
-import rospy
-from std_msgs.msg import String
-
-
-rospy.init_node("home_edu_Kinda")
-
-my_publisher = rospy.Publisher("/home_edu_Kinda/msg", String, queue_size=1)
-
+flag = 0
 while True:
-    my_publisher.publish("Hello")
+	answer = main.answer_question_from_data(msg, kdata)['answer']
+	print(answer)
+	
+	if answer == 'follow':
+		flag = 1
+	elif answer == 'stop':
+		k.move(0, 0)
+		break
+	
+	forward_speed, turn_speed = f.follow(c.depth_image, flag==1)
+	k.move(forward_speed, turn_speed)
