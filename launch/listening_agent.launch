@@ -1,0 +1,35 @@
+<launch>
+    <node
+            name="home_edu_listening_unit_0"
+            pkg="home_edu"
+            type="ListeningUnit.py"
+            required="true"
+            output="screen">
+        <param name="index" value="0" />
+    </node>
+    <node
+            name="home_edu_listening_unit_1"
+            pkg="home_edu"
+            type="ListeningUnit.py"
+            required="true"
+            output="screen">
+        <param name="index" value="1" />
+    </node>
+    <node
+            name="home_edu_listening_unit_2"
+            pkg="home_edu"
+            type="ListeningUnit.py"
+            required="true"
+            output="screen">
+        <param name="index" value="2" />
+    </node>
+    <node
+            name="home_edu_listening_agent"
+            pkg="home_edu"
+            type="ListeningAgent.py"
+            required="true"
+            output="screen">
+        <param name="num_of_units" value="3" />
+        <param name="unit_topic" value="/home_edu/listening_unit" />
+    </node>
+</launch>

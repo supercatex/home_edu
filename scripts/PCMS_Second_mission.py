@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 import rospy
 import time
 import cv2 as cv
@@ -94,21 +95,30 @@ if __name__ == '__main__':
     goal = [[-3.36, 8.17, 0.0025], [1.9, 5.51, -0.00137], [0.00489, -0.0209, -0.00137]]
     
     flag = 0
+    
+    print(kdata)
     while True:
         answer = main.answer_question_from_data(msg, kdata)['answer']
         print(answer)
-        
         if answer == 'follow':
             flag = 1
         elif answer == 'stop':
-            k.move(0, 0)
-            break
-        
+            flag = 2
+        else:
+            if flag == 1:
+                pass
+            else:
+                continue
         forward_speed, turn_speed = f.follow(c.depth_image, flag==1)
+    
         k.move(forward_speed, turn_speed)
-
-        _listen_publisher.publish("false")
-
+        
+        if flag == 2:
+            break
+    _listen_publisher.publish("false")
+    x, y, z = chassis.get_current_pose()
+    print(x, y, z)
+    print('finished append')
     time.sleep(1)
     s.say("please say the location of where the bag should be put")
     _listen_publisher.publish("true")
@@ -163,20 +173,18 @@ if __name__ == '__main__':
                 continue
     
     print("end simulate")
-    px, py, pz = chassis.get_current_pose()
-    print(px, py, pz)
-    print('finished append')
-    s.say("gripped, i am now going to the location")
+    
     time.sleep(1)
     
     m.close()
     
-    m.reset()
+    m.exec_servos_pos(15, 25, 0, -60)
     
     m.wait()
     
     m.exec_servos_pos(-2, 20, 15, -150, 1)
 	
+    s.say("gripped, i am now going to the location")
     s.say("Please stand away from me", "wink")
     time.sleep(3)
     print(goal[i][0], goal[i][1], goal[i][2])
@@ -190,7 +198,7 @@ if __name__ == '__main__':
     s.say("i am now turning around to find you")
     
     
-    g = Gender("/home/mustar/pcmsq/src/home_edu/scripts/libs/deploy_gender.prototxt", "/home/mustar/pcms/src/home_edu/scripts/libs/gender_net.caffemodel")
+    g = Gender("/home/mustar/pcms/src/home_edu/scripts/libs/deploy_gender.prototxt", "/home/mustar/pcms/src/home_edu/scripts/libs/gender_net.caffemodel")
     
     cam = astra("top_camera")
     while True:
@@ -204,9 +212,8 @@ if __name__ == '__main__':
     while True:
         time.sleep(1)
         s.say("please follow me to the garage and stand behind me", "wink")
-        chassis.move_to(px, py, pz)
+        chassis.move_to(x, y, z)
         s.say("arrived to the garage")
-        break
     # while not rospy.is_shutdown():
     #     frame = cam.rgb_image
     #     position = g.detect_face(frame)
