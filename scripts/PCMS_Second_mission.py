@@ -39,7 +39,7 @@ def depth_detect(frame):
     
         print(min)
     
-        if min <= 750 and min >= 550:
+        if min <= 750 and min >= 350:
             return True
         else:
             return False
@@ -112,8 +112,18 @@ if __name__ == '__main__':
     px, py, pz = chassis.get_current_pose()
     print(px, py, pz)
     print('finished append')
-    s.say("please say the location of where the bag should be put")
+    s.say("the robot have stopped")
+
+    m.wait()
+    
+    signal = True
+    
+    m.open()
+    
+    
     _listen_publisher.publish("true")
+    
+
     while True:
         place = str(main.answer_question_from_data(msg, kdata)['answer']).lower()
         if place == 'kitchen':
@@ -125,18 +135,13 @@ if __name__ == '__main__':
         elif place == 'living room':
             i = 2
             break
-        else:
-            pass
+        elif len(place) > 5:
+            s.say("please tell me where should i put the bag")
 
     _listen_publisher.publish("false")
     s.say("you said " + str(place))
 
-    m.wait()
-    s.say("please start the bag gripping task")
-    
-    signal = True
-    
-    m.open()
+    s.say("please give me the bag")
     while not rospy.is_shutdown():
     
         print(obj.area)
@@ -145,7 +150,7 @@ if __name__ == '__main__':
         image, x, y, z, alpha = obj.run(c.rgb_image, c.depth_image)
         
         if signal == True:
-            if obj.area < 1500 or obj.area is None:
+            if obj.area < 8000 or obj.area is None:
                 signal = False
                 start_time = time.time()
                 continue
@@ -155,7 +160,7 @@ if __name__ == '__main__':
                 print('mani x, y, z:', x, y, z, -60)
                 continue
         else:
-            if obj.area < 1500 or obj.area is None:
+            if obj.area < 8000 or obj.area is None:
                 if time.time() - start_time > 3:
                     break
                 else:
@@ -175,14 +180,15 @@ if __name__ == '__main__':
     
     m.exec_servos_pos(-2, 20, 15, -150, 1)
 	
-    s.say("gripped, i am now going to the location")
+    s.say("gripped, i am going to the location")
+    
     s.say("Please stand away from me", "wink")
-    time.sleep(2)
+    time.sleep(1.5)
     print(goal[i][0], goal[i][1], goal[i][2])
     chassis.move_to(goal[i][0], goal[i][1], goal[i][2])
     s.say("arrived to goal")
-    m.exec_servos_pos(22,5,0,-60,2)
-    m.exec_servos_pos(22,5,0, 40,2)
+    m.exec_servos_pos(20,10,0,-60,2)
+    m.exec_servos_pos(20,10,0, 40,2)
     m.open()
     s.say("please take the bag")
     
@@ -192,41 +198,38 @@ if __name__ == '__main__':
     g = Gender("/home/mustar/pcms/src/home_edu/scripts/libs/deploy_gender.prototxt", "/home/mustar/pcms/src/home_edu/scripts/libs/gender_net.caffemodel")
     
     cam = astra("top_camera")
-    while True:
-        # frame = c.rgb_image
-        k.move(0, 0.3)
-        status = depth_detect(c.depth_image)
-        if status == True:
-            print("ok")
-            break
-            
-    while True:
-        s.say("please follow me to the garage and stand behind me", "wink")
-        time.sleep(2)
-        chassis.move_to(px, py, pz)
-        s.say("arrived to the garage")
-        break
-    # while not rospy.is_shutdown():
-    #     frame = cam.rgb_image
-    #     position = g.detect_face(frame)
-    #     if len(position) == 0:
-    #         print('moving')
-    #         k.move(0, 0.3)
-    #         cv.imshow("frame", frame)
-    #     else:
-    #         p1 = position[0]
-    #         x_val = (p1[2] - p1[0]) / 2 + p1[0]
-    #         print(x_val, frame.shape)
-    #         if x_val < 300:
-    #             k.move(0, 0.3)
-    #         elif x_val > 340:
-    #             k.move(0, -0.3)
-    #         else:
-    #             time.sleep(1)
-    #             s.say("please follow me to the garage and stand behind me", "wink")
-    #             chassis.move_to(x, y, z)
-    #             s.say("arrived to the garage")
-    #             break
+    # while True:
+    #     # frame = c.rgb_image
+    #     k.move(0, 0.3)
+    #     status = depth_detect(c.depth_image)
+    #     if status == True:
+    #         print("ok")
+    #         break
+    #
+
+    while not rospy.is_shutdown():
+        frame = cam.rgb_image
+        position = g.detect_face(frame)
+        if len(position) == 0:
+            print('moving')
+            k.move(0, 0.3)
+            cv.imshow("frame", frame)
+        else:
+            p1 = position[0]
+            x_val = (p1[2] - p1[0]) / 2 + p1[0]
+            print(x_val, frame.shape)
+            if x_val < 300:
+                k.move(0, 0.3)
+            elif x_val > 340:
+                k.move(0, -0.3)
+            else:
+                time.sleep(1)
+                s.say("please follow me to the garage and stand behind me", "wink")
+                chassis.move_to(px, py, pz)
+                s.say("arrived to the garage")
+                break
+                
+        
         '''
             for x1, y1, x2, y2 in position:
                 x_val = (x2 - x1) / 2 + x1

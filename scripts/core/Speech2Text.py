@@ -51,6 +51,7 @@ class Speech2Text(object):
             text = self.recognizer.recognize_google(audio, language=self.lang)
             cmd = f3 + ":" + text
             self.publisher.publish(cmd)
+            
             return text
         except Exception as e:
             print(e)

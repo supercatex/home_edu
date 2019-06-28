@@ -14,7 +14,7 @@ room
 
 please go to the bedroom
 bedroom
-bedroom
+bedroom, bathroom
 
 please go to the kitchen
 kitchen

@@ -42,7 +42,7 @@ class PH_Follow_me(object):
         # This function will only works if you have imported the maths library
         return sqrt((center_point[1] - x) ** 2 + (center_point[0] - y) ** 2)  # center_point format: (y, x)
 
-	# CAUTION!!! The image is DEPTH image!!!
+    # CAUTION!!! The image is DEPTH image!!!
     def follow(self, depth, flag):
         if flag:
             frame = depth[0:480, (640 / 4):(640 * 3)].copy()
@@ -82,5 +82,6 @@ class PH_Follow_me(object):
                     else:
                         self.forward_speed = 0
                         self.turn_speed = 0
-            return self.forward_speed, self.turn_speed
+            if self.forward_speed < 0.6:
+                return self.forward_speed, self.turn_speed
         return 0, 0

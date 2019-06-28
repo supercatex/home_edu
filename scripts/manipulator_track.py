@@ -78,8 +78,11 @@ class manipulator_track(object):
     
             mid = [x, y, z]
             
-            print('middle_virture:', mid)
-        return rgb_image, mid, y - h / 2
+            if mid is not None:
+                print('middle_virture:', mid)
+                return rgb_image, mid, y - h / 2
+            else:
+                return rgb_image, [10, 10, 10], y - h / 2
     
     def calculation(self, mid):
         x0 = mid[0]
