@@ -77,8 +77,8 @@ class manipulator_track(object):
             z = real_z
     
             mid = [x, y, z]
-    
-        print('middle_virture:', mid)
+            
+            print('middle_virture:', mid)
         return rgb_image, mid, y - h / 2
     
     def calculation(self, mid):

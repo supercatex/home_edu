@@ -106,7 +106,7 @@ if __name__ == '__main__':
             
         forward_speed, turn_speed = f.follow(c.depth_image, flag==1)
         k.move(forward_speed, turn_speed)
-        cv.waitKey(10)
+        cv.waitKey(1)
         
     _listen_publisher.publish("false")
     px, py, pz = chassis.get_current_pose()
