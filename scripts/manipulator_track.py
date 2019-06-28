@@ -21,15 +21,15 @@ class manipulator_track(object):
         self.cameraV = 49.5 * math.pi / 180
     
         if color == "red":
-            self.lower = [0, 0, 70]
-            self.upper = [98, 53, 255]
+            self.lower = [0, 0, 100]
+            self.upper = [50, 53, 255]
     
         elif color == "blue":
             self.lower = [0, 0, 70]
             self.upper = [98, 53, 255]
         else:
-            self.lower = [0, 0, 70]
-            self.upper = [98, 53, 255]
+            self.lower = [0, 0, 100]
+            self.upper = [50, 53, 255]
     
     def color_detect(self, rgb_image, depth_image):
         lower = np.array(self.lower, dtype="uint8")
@@ -140,10 +140,10 @@ if __name__ == "__main__":
     
     m.reset()
     
-    #m.wait()
+    m.wait()
     
-    #m.open()
-    while rospy.is_shutdown():
+    m.open()
+    while not rospy.is_shutdown():
     
         print(obj.area)
         frame, image = c.depth_image, c.rgb_image
@@ -176,7 +176,7 @@ if __name__ == "__main__":
     
     time.sleep(1)
     
-    #m.close()
+    m.close()
     
     m.reset()
     m.wait()

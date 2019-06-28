@@ -19,7 +19,7 @@ my_subscriber = rospy.Subscriber("/home_edu_Listen/situation", String, callback,
 
 while True:
     if _isListen == "true":
-        s.ambient_noise(3)
+        s.ambient_noise(1.5)
         _isListen = 'listen'
     elif _isListen == 'listen':
         msg = s.listen()

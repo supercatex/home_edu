@@ -68,7 +68,7 @@ class PH_Follow_me(object):
                         else:
                             pass
         
-                    minLoc = (self.most_center_point[0], self.most_center_point[1])
+                    minLoc = (self.most_center_point[0] + (640 / 4), self.most_center_point[1])
         
                     # error = (val - horizan)
         

@@ -85,13 +85,11 @@ if __name__ == '__main__':
         if status == True:
             print("ok")
             break
-    
-    time.sleep(1)
+
     s.say("Please stand in front of me", "happy-1")
     s.say("please stand still and say follow me")
-    
+
     _listen_publisher.publish("true")
-    
     goal = [[-3.36, 8.17, 0.0025], [1.9, 5.51, -0.00137], [0.00489, -0.0209, -0.00137]]
     
     flag = 0
@@ -103,23 +101,17 @@ if __name__ == '__main__':
         if answer == 'follow':
             flag = 1
         elif answer == 'stop':
-            flag = 2
-        else:
-            if flag == 1:
-                pass
-            else:
-                continue
-        forward_speed, turn_speed = f.follow(c.depth_image, flag==1)
-    
-        k.move(forward_speed, turn_speed)
-        
-        if flag == 2:
+            k.move(0, 0)
             break
+            
+        forward_speed, turn_speed = f.follow(c.depth_image, flag==1)
+        k.move(forward_speed, turn_speed)
+        cv.waitKey(10)
+        
     _listen_publisher.publish("false")
-    x, y, z = chassis.get_current_pose()
-    print(x, y, z)
+    px, py, pz = chassis.get_current_pose()
+    print(px, py, pz)
     print('finished append')
-    time.sleep(1)
     s.say("please say the location of where the bag should be put")
     _listen_publisher.publish("true")
     while True:
@@ -138,7 +130,7 @@ if __name__ == '__main__':
 
     _listen_publisher.publish("false")
     s.say("you said " + str(place))
-    time.sleep(1)
+
     m.wait()
     s.say("please start the bag gripping task")
     
@@ -174,7 +166,6 @@ if __name__ == '__main__':
     
     print("end simulate")
     
-    time.sleep(1)
     
     m.close()
     
@@ -186,7 +177,7 @@ if __name__ == '__main__':
 	
     s.say("gripped, i am now going to the location")
     s.say("Please stand away from me", "wink")
-    time.sleep(3)
+    time.sleep(2)
     print(goal[i][0], goal[i][1], goal[i][2])
     chassis.move_to(goal[i][0], goal[i][1], goal[i][2])
     s.say("arrived to goal")
@@ -210,10 +201,11 @@ if __name__ == '__main__':
             break
             
     while True:
-        time.sleep(1)
         s.say("please follow me to the garage and stand behind me", "wink")
-        chassis.move_to(x, y, z)
+        time.sleep(2)
+        chassis.move_to(px, py, pz)
         s.say("arrived to the garage")
+        break
     # while not rospy.is_shutdown():
     #     frame = cam.rgb_image
     #     position = g.detect_face(frame)
