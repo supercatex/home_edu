@@ -23,6 +23,12 @@ class FacialDisplay(object):
             self.callback,
             queue_size=1
         )
+        
+        self.publish_waitkey = rospy.Publisher(
+            '/home_edu/facial_key',
+            String,
+            queue_size=1
+        )
     
     def load_image(self, name, message):
         self.name = name
@@ -95,6 +101,7 @@ class FacialDisplay(object):
         while not rospy.is_shutdown():
             cv.imshow(window_name, self.image)
             key = cv.waitKey(1)
+            self.publish_waitkey.publish(key)
             if key in [ord('q'), 27]:
                 break
 

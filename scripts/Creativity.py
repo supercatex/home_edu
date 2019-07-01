@@ -16,7 +16,8 @@ from core import GenderDetection as Gender
 from core import Manipulator as manipulator
 from core import PH_Follow_me as PH_Follow_me
 from manipulator_track import manipulator_track as manipulator_track
-import main
+import mainshoulde
+import math
 
 publisher = rospy.Publisher(
     "/home_edu/facial",
@@ -112,13 +113,13 @@ if __name__ == '__main__':
             flag = 6
             s.say("you can buy basketball equipments at fans")
         
-		elif answer == "find":
-			s.say("Hello, I am turtlebot, who is the server here, where do you want to go? I can bring you there")
+        elif answer == "find":
+            s.say("Hello, I am turtlebot, who is the server here, where do you want to go? I can bring you there")
 			
-		elif answer == "nike":
-			s.say("ok, follow me") 
-			
-		elif answer == "if you buy two items in Nike, you will get a 10%off. "
+        elif answer == "nike":
+            s.say("ok, follow me")
+            
+        elif answer == "if you buy two items in Nike, you will get a 10%off. "
         k.move(0.3, 0)
         time.sleep(distance)
 
