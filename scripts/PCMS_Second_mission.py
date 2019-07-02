@@ -79,6 +79,9 @@ if __name__ == '__main__':
     print("started")
     s.say("hello, I'm your assistant", "happy-1")
     _listen_publisher = rospy.Publisher("/home_edu_Listen/situation", String, queue_size=1)
+    
+    s.say("Please stand in front of me", "happy-1")
+    
     while True:
         # frame = c.rgb_image
         status = depth_detect(c.depth_image)
@@ -86,27 +89,29 @@ if __name__ == '__main__':
             print("ok")
             break
 
-    s.say("Please stand in front of me", "happy-1")
     s.say("please stand still and say follow me")
 
     _listen_publisher.publish("true")
     goal = [[-3.36, 8.17, 0.0025], [1.9, 5.51, -0.00137], [0.00489, -0.0209, -0.00137]]
     
     flag = 0
-    start_time = 0
+    flag2 = 0
+    start_time = time.time()
     print(kdata)
     while True:
         answer = main.answer_question_from_data(msg, kdata)['answer']
-        print(answer)
+        # print("answer:", answer)
         if answer == 'follow':
             flag = 1
             _listen_publisher.publish("false")
             start_time = time.time()
+            print("start_time:", start_time)
         elif answer == 'stop':
             k.move(0, 0)
             break
         
         if time.time() - start_time > 5 and flag == 1:
+            print("ok")
             _listen_publisher.publish("true")
             start_time = 1000000
 
@@ -126,10 +131,8 @@ if __name__ == '__main__':
     
     m.open()
     
-    
     _listen_publisher.publish("true")
     
-
     while True:
         place = str(main.answer_question_from_data(msg, kdata)['answer']).lower()
         if place == 'kitchen':
