@@ -30,6 +30,7 @@ while not rospy.is_shutdown():
         _mission4_sig_pub.publish("1")
     elif _signal_key == "-1":
         _mission4_sig_pub.publish('0')
-    
+    elif _signal_key == "113":
+        _mission4_sig_pub.publish("-1")
     else:
         pass
