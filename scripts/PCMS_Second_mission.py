@@ -93,17 +93,23 @@ if __name__ == '__main__':
     goal = [[-3.36, 8.17, 0.0025], [1.9, 5.51, -0.00137], [0.00489, -0.0209, -0.00137]]
     
     flag = 0
-    
+    start_time = 0
     print(kdata)
     while True:
         answer = main.answer_question_from_data(msg, kdata)['answer']
         print(answer)
         if answer == 'follow':
             flag = 1
+            _listen_publisher.publish("false")
+            start_time = time.time()
         elif answer == 'stop':
             k.move(0, 0)
             break
-            
+        
+        if time.time() - start_time > 5 and flag == 1:
+            _listen_publisher.publish("true")
+            start_time = 1000000
+
         forward_speed, turn_speed = f.follow(c.depth_image, flag==1)
         k.move(forward_speed, turn_speed)
         cv.waitKey(1)
