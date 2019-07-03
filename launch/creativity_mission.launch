@@ -1,0 +1,21 @@
+<launch>
+    <include file="$(find astra_launch)/launch/astra.launch">
+        <arg name="camera" value="top_camera" />
+        <arg name="device_id" value="$(env ASTRA_DEVICE_ID_TOP)" />
+    </include>
+    <include file="$(find turtlebot_bringup)/launch/minimal.launch"></include>
+    <include file="$(find home_edu)/launch/arm.launch"></include>
+    <node
+        name="mission_main"
+        pkg="home_edu"
+        type="mission4.py"
+        required="true"
+        output="screen">
+    </node>
+    <node
+        name="mission_signal"
+        pkg="home_edu"
+        type="mission4_signal.py"
+        required="true"
+        output="screen"
+</launch>

@@ -45,7 +45,7 @@ class PH_Follow_me(object):
     # CAUTION!!! The image is DEPTH image!!!
     def follow(self, depth, flag):
         if flag:
-            frame = depth[0:480, (640 / 4):(640 * 3)].copy()
+            frame = depth[(480 / 6):(480 / 6 * 5), (640 / 4):(640 / 4 * 3)].copy()
             nonzeros = np.nonzero(frame)
             if len(nonzeros[0]) > 0:
                 if len(nonzeros[0]) > 0:

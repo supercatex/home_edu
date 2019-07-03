@@ -58,7 +58,7 @@ if __name__ == '__main__':
     msg = ' '
     rospy.init_node("home_edu_PCMS_Second_mission", anonymous=True)
     rate = rospy.Rate(20)
-    s = speaker()
+    s = speaker(150)
     
     rospy.Subscriber(
         "/home_edu_Listen/msg",
@@ -87,12 +87,13 @@ if __name__ == '__main__':
         status = depth_detect(c.depth_image)
         if status == True:
             print("ok")
+            s.say("ok I have found you")
             break
 
     s.say("please stand still and say follow me")
 
     _listen_publisher.publish("true")
-    goal = [[-3.36, 8.17, 0.0025], [1.9, 5.51, -0.00137], [0.00489, -0.0209, -0.00137]]
+    goal = [[-2.57, -2.11, -0.00143], [-5.74, -1.53, -0.00143], [-8.11, 2.35, -0.00143]]
     
     flag = 0
     flag2 = 0
@@ -103,17 +104,17 @@ if __name__ == '__main__':
         # print("answer:", answer)
         if answer == 'follow':
             flag = 1
-            _listen_publisher.publish("false")
-            start_time = time.time()
-            print("start_time:", start_time)
+			flag2 = 1
+			
         elif answer == 'stop':
             k.move(0, 0)
             break
         
-        if time.time() - start_time > 5 and flag == 1:
-            print("ok")
-            _listen_publisher.publish("true")
-            start_time = 1000000
+		if flag2 == 1:
+			_listen_publisher.publish("false")
+			_listen_publisher.publish("wait")
+			_listen_publisher.publish("true")
+			flag2 = 0
 
         forward_speed, turn_speed = f.follow(c.depth_image, flag==1)
         k.move(forward_speed, turn_speed)

@@ -72,7 +72,7 @@ cv.setMouseCallback("frame", c.mouse_callback)
 while not rospy.is_shutdown():
     depth, image = c.depth_image, c.rgb_image
 
-    frame = depth[0:480, (640 / 4):(640 * 3)].copy()
+    frame = depth[(480 / 6):(480 / 6 * 5), (640 / 4):(640 / 4 * 3)].copy()
 
     blurred_frame = cv.GaussianBlur(image, (5, 5), 0)
 
@@ -111,7 +111,7 @@ while not rospy.is_shutdown():
             else:
                 pass
 
-        minLoc = (most_center_point[0], most_center_point[1])
+        minLoc = (most_center_point[0] + (640 / 4), most_center_point[1])
 
         error = (val - horizan)
 

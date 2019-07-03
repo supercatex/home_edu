@@ -2,6 +2,7 @@
 import rospy
 from core import Speech2Text as Speech2Text
 from std_msgs.msg import String
+import time
 
 s = Speech2Text()
 
@@ -19,11 +20,15 @@ my_subscriber = rospy.Subscriber("/home_edu_Listen/situation", String, callback,
 
 while True:
     if _isListen == "true":
-        s.ambient_noise(1.5)
+        s.ambient_noise(2)
+		s.say("finished getting noise")
         _isListen = 'listen'
     elif _isListen == 'listen':
         msg = s.listen()
         print(msg)
         my_publisher.publish(msg)
+	elif _isListen == "wait"
+		time.sleep(5)
+		pass
     else:
         pass
