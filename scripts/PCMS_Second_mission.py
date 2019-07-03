@@ -59,7 +59,7 @@ if __name__ == '__main__':
     msg = ' '
     rospy.init_node("home_edu_PCMS_Second_mission", anonymous=True)
     rate = rospy.Rate(20)
-    s = speaker(145, 1.3)
+    s = speaker(150)
     
     rospy.Subscriber(
         "/home_edu_Listen/msg",
@@ -79,6 +79,7 @@ if __name__ == '__main__':
     m.exec_servos_pos(10, 15, 0, -30)
     print("started")
     s.say("hello, I'm your assistant", "happy-1")
+    s.say("Please stand in front of me", "happy-1")
     _listen_publisher = rospy.Publisher("/home_edu_Listen/situation", String, queue_size=1)
     
     s.say("Please stand in front of me", "happy-1")
@@ -105,17 +106,17 @@ if __name__ == '__main__':
         # print("answer:", answer)
         if answer == 'follow':
             flag = 1
-            flag2 = 1
-            
+			flag2 = 1
+			
         elif answer == 'stop':
             k.move(0, 0)
             break
         
-        if flag2 == 1:
-            _listen_publisher.publish("false")
-            _listen_publisher.publish("wait")
-            _listen_publisher.publish("true")
-            flag2 = 0
+		if flag2 == 1:
+			_listen_publisher.publish("false")
+			_listen_publisher.publish("wait")
+			_listen_publisher.publish("true")
+			flag2 = 0
 
         forward_speed, turn_speed = f.follow(c.depth_image, flag==1)
         k.move(forward_speed, turn_speed)
@@ -146,6 +147,8 @@ if __name__ == '__main__':
         elif place == 'living room':
             i = 2
             break
+        elif len(place) > 5:
+            s.say("please tell me where should i put the bag")
 
     _listen_publisher.publish("false")
     s.say("you said " + str(place))
@@ -191,7 +194,7 @@ if __name__ == '__main__':
     s.say("gripped, i am going to the location")
     
     s.say("Please stand away from me", "wink")
-    time.sleep(3)
+    time.sleep(1.5)
     print(goal[i][0], goal[i][1], goal[i][2])
     chassis.move_to(goal[i][0], goal[i][1], goal[i][2])
     s.say("arrived to goal")
@@ -233,7 +236,6 @@ if __name__ == '__main__':
             else:
                 time.sleep(1)
                 s.say("please follow me to the garage and stand behind me", "wink")
-                time.sleep(3)
                 chassis.move_to(px, py, pz)
                 s.say("arrived to the garage")
                 break
@@ -253,8 +255,7 @@ if __name__ == '__main__':
                     break
         '''
         cv.waitKey(1)
-        s.say("finished task", "wink")
-        while True:
-            print("end of program")
+    print("end of program")
+    s.say("finished task", "wink")
     
     

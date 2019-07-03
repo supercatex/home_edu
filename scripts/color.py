@@ -3,13 +3,12 @@ import cv2 as cv
 import time
 import random
 import math
-from video import Video
-
+import rospy
+from core import Astra as astra
 
 class ImageTool(object):
 
     def __init__(self, debug=False):
-        self.video = cv.VideoCapture(1)
         self.frame = None
 
         self.pause = False
@@ -81,11 +80,13 @@ class ImageTool(object):
                 h = int(h)
                 s = int(s)
                 v = int(v)
+                print('h, s, v', h ,s, v)
                 self.detect_color_from = (max(h - self.e1, 0), max(s - self.e2, 16), max(v - self.e3, 16))
                 self.detect_color_to = (min(h + self.e1, 180), min(s + self.e2, 240), min(v + self.e3, 240))
             if event == cv.EVENT_RBUTTONDBLCLK:
                 self.detect_color_from = (0, 0, 0)
                 self.detect_color_to = (180, 255, 255)
+
 
     def calculation_length(self, Rp_start, Rp_end, Tp_start, Tp_end):
         #get ref point x, y
@@ -106,10 +107,7 @@ class ImageTool(object):
         self.tmp = tmp_line
         print('tmp_line', tmp_line)
 
-    def calculation_result(self, ref, tmp):
-        print(self.ref_real
-        self.tmp_real = ((self.ref_real * tmp)/ref)
-        print("result", self.tmp_real)
+
 
 if __name__ == "__main__":
     rospy.init_node("home_edu_manipulator_track", anonymous=True)

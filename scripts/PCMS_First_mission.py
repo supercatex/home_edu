@@ -116,7 +116,7 @@ if __name__ == '__main__':
     P.say("I will start now")
     male_count, female_count = 0, 0
 
-
+    cascade = cv.CascadeClassifier("/home/mustar/pcms/src/home_edu/scripts/libs/haarcascade_frontalface_alt2.xml")
 
     MODEL_MEAN_VALUES = (78.4263377603, 87.7689143744, 114.895847746)
     gender_list = ['Male', 'Female']
@@ -129,7 +129,7 @@ if __name__ == '__main__':
 
     rate = rospy.Rate(20)
 
-    _detector = dlib.get_frontal_face_detector()
+    # _detector = dlib.get_frontal_face_detector()
     image_path = "/home/mustar/pcms/src/home_edu/scripts/temp.jpg"
 
     c = astra("top_camera")
@@ -164,19 +164,21 @@ if __name__ == '__main__':
     cv.namedWindow("image")
     cv.setMouseCallback("image", c.mouse_callback)
 
-    dets, _, _ = _detector.run(image, False)
-    print(dets)
+    # dets, _, _ = _detector.run(image, False)
+    # print(dets)
+    faces = cascade.detectMultiScale(image, minSize=(50, 50))
 
     face_count = 0
-    for i, d in enumerate(dets):
-        x1 = d.left()
-        y1 = d.top()
-        x2 = d.right()
-        y2 = d.bottom()
-        if x1 < 0 or y1 < 0: continue
+    # for i, d in enumerate(dets):
+    for (x, y, w, h) in faces:
+        # x1 = d.left()
+        # y1 = d.top()
+        # x2 = d.right()
+        # y2 = d.bottom()
+        # if x1 < 0 or y1 < 0: continue
         face_count += 1
         # print(y1, y2, x1, x2)
-        face_img = image[y1:y2, x1:x2].copy()
+        face_img = image[y:y+h, x:x+w].copy()
         face_img = cv.resize(face_img, (227, 227))
         # print(face_img.shape)
         # cv.imshow("face_img", face_img)
@@ -202,7 +204,7 @@ if __name__ == '__main__':
             female_count += 1
             color = (0, 0, 255)
 
-        cv.rectangle(image, (x1, y1), (x2, y2), color, 2)
+        cv.rectangle(image, (x, y), (x + w, y + h), color, 2)
 
     # faces = face_cascade.detectMultiScale(gray, minSize=(50, 50))
     # for (x, y, w, h) in faces:
