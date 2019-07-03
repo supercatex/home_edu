@@ -75,7 +75,7 @@ if __name__ == '__main__':
     f = PH_Follow_me()
     m = manipulator()
     k = kobuki()
-    obj = manipulator_track("red")
+    obj = manipulator_track("brown")
     m.exec_servos_pos(10, 15, 0, -30)
     print("started")
     s.say("hello, I'm your assistant", "happy-1")
@@ -158,7 +158,7 @@ if __name__ == '__main__':
     
         print(obj.area)
         frame, image = c.depth_image, c.rgb_image
-    
+
         image, x, y, z, alpha = obj.run(c.rgb_image, c.depth_image)
         
         if signal == True:

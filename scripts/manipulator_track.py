@@ -20,22 +20,23 @@ class manipulator_track(object):
     
         self.cameraV = 49.5 * math.pi / 180
     
-        if color == "red":
-            self.lower = [0, 0, 100]
-            self.upper = [50, 53, 255]
+        if color == "brown":
+            self.lower = [5, 90, 110]
+            self.upper = [20, 140, 150]
     
-        elif color == "blue":
-            self.lower = [0, 0, 70]
-            self.upper = [98, 53, 255]
+        elif color == "white":
+            self.lower = [95, 0, 200]
+            self.upper = [150, 50, 255]
         else:
-            self.lower = [0, 0, 100]
-            self.upper = [50, 53, 255]
+            self.lower = [5, 90, 110]
+            self.upper = [20, 140, 150]
     
     def color_detect(self, rgb_image, depth_image):
         lower = np.array(self.lower, dtype="uint8")
     
         upper = np.array(self.upper, dtype="uint8")
-    
+        
+        image = cv2.cvtColor(rgb_image, cv2.COLOR_BGR2HSV)
         mask = cv2.inRange(rgb_image, lower, upper)
     
         ret, thresh = cv2.threshold(mask, 40, 255, 0)
