@@ -106,17 +106,17 @@ if __name__ == '__main__':
         # print("answer:", answer)
         if answer == 'follow':
             flag = 1
-			flag2 = 1
-			
+            flag2 = 1
+            
         elif answer == 'stop':
             k.move(0, 0)
             break
         
-		if flag2 == 1:
-			_listen_publisher.publish("false")
-			_listen_publisher.publish("wait")
-			_listen_publisher.publish("true")
-			flag2 = 0
+        if flag2 == 1:
+            _listen_publisher.publish("false")
+            _listen_publisher.publish("wait")
+            _listen_publisher.publish("true")
+            flag2 = 0
 
         forward_speed, turn_speed = f.follow(c.depth_image, flag==1)
         k.move(forward_speed, turn_speed)

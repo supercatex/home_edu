@@ -21,15 +21,15 @@ class manipulator_track(object):
         self.cameraV = 49.5 * math.pi / 180
     
         if color == "brown":
-            self.lower = [5, 90, 110]
-            self.upper = [20, 140, 150]
+            self.lower = [0, 50, 125]
+            self.upper = [25, 95, 220]
     
         elif color == "white":
             self.lower = [95, 0, 200]
             self.upper = [150, 50, 255]
         else:
-            self.lower = [5, 90, 110]
-            self.upper = [20, 140, 150]
+            self.lower = [0, 50, 125]
+            self.upper = [25, 95, 220]
     
     def color_detect(self, rgb_image, depth_image):
         lower = np.array(self.lower, dtype="uint8")
@@ -37,7 +37,7 @@ class manipulator_track(object):
         upper = np.array(self.upper, dtype="uint8")
         
         image = cv2.cvtColor(rgb_image, cv2.COLOR_BGR2HSV)
-        mask = cv2.inRange(rgb_image, lower, upper)
+        mask = cv2.inRange(image, lower, upper)
     
         ret, thresh = cv2.threshold(mask, 40, 255, 0)
         im2, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
@@ -60,7 +60,7 @@ class manipulator_track(object):
             y = (y + h / 2)
     
             x = (x + w / 2)
-    
+             
             cv2.circle(rgb_image, (x, y), 5, (0, 255, 255), -1)
             h2, w2 = depth_image.shape
     
@@ -76,7 +76,11 @@ class manipulator_track(object):
                     e = e + 1
     
             z = real_z
-    
+            
+            if z >= 600:
+                return 1, 1, 1
+            else:
+                pass
             mid = [x, y, z]
             
             if mid is None or mid == []:
@@ -84,6 +88,8 @@ class manipulator_track(object):
             else:
                 print('middle_virture:', mid)
                 return rgb_image, mid, y - h / 2
+        else:
+            return 0, 0, 0
     
     def calculation(self, mid):
         x0 = mid[0]
@@ -127,7 +133,9 @@ class manipulator_track(object):
         
         else:
             frame, mid, y0 = self.color_detect(rgb_image, depth_image)
-        
+            if frame == 0 and mid == 0:
+                return 0, 0, 0, 0, 0
+
             Rx, Ry, Rz = self.calculation(mid)
         
             x, y, z, a = self.physical_distance(Rx, Ry, Rz)
@@ -143,7 +151,7 @@ if __name__ == "__main__":
     
     m = Manipulator()
     
-    obj = manipulator_track("red")
+    obj = manipulator_track("white")
     
     signal = True
     
