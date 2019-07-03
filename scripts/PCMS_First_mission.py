@@ -90,7 +90,7 @@ if __name__ == '__main__':
     # face_cascade = cv.CascadeClassifier('/home/mustar/pcms/src/home_edu/scripts/libs/haarcascade_frontalface_default.xml')
 
     # Init the speaker cam and kobuki
-    P = speaker()
+    P = speaker(145, 1.3)
 
     r = sr.Recognizer()
 

@@ -120,13 +120,18 @@ class manipulator_track(object):
         return Px, Py, Pz, alpha
     
     def run(self, rgb_image, depth_image):
-        frame, mid, y0 = self.color_detect(rgb_image, depth_image)
-    
-        Rx, Ry, Rz = self.calculation(mid)
-    
-        x, y, z, a = self.physical_distance(Rx, Ry, Rz)
-    
-        return frame, x, y, z, a
+        if rgb_image is None or depth_image is None:
+            
+            return 0, 0, 0, 0, 0
+        
+        else:
+            frame, mid, y0 = self.color_detect(rgb_image, depth_image)
+        
+            Rx, Ry, Rz = self.calculation(mid)
+        
+            x, y, z, a = self.physical_distance(Rx, Ry, Rz)
+        
+            return frame, x, y, z, a
     
 
 if __name__ == "__main__":
@@ -150,8 +155,15 @@ if __name__ == "__main__":
     
         print(obj.area)
         frame, image = c.depth_image, c.rgb_image
-    
+        
+        if c.depth_image is None or c.rgb_image is None:
+            continue
+            
         image, x, y, z, alpha = obj.run(c.rgb_image, c.depth_image)
+        
+        if x == 0 and y == 0 and z == 0:
+            
+            continue
         
         cv2.imshow("image", image)
         cv2.waitKey(1)
@@ -173,7 +185,7 @@ if __name__ == "__main__":
             else:
                 signal = True
                 continue
-    
+        
     
     print("end loop")
     

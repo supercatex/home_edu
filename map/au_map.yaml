@@ -1,4 +1,4 @@
-image: /home/mustar/pcms/src/home_edu/map/AU_map.pgm
+image: /home/mustar/pcms/src/home_edu/map/au_map.pgm
 resolution: 0.050000
 origin: [-15.400000, -12.200000, 0.000000]
 negate: 0

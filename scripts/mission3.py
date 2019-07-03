@@ -32,7 +32,7 @@ while not rospy.is_shutdown():
         
         if x1 + (x2 - x1) * 2 > 1280:
             x1 = int(x2 * 2 - 1280)
-            x2 = int((x1 + 1280) / 2))
+            x2 = int((x1 + 1280) / 2)
 
         if y1 - y1 * 0.1 < 0:
             y1 = int(y1 / 0.1)
