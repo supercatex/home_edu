@@ -82,6 +82,6 @@ class PH_Follow_me(object):
                     else:
                         self.forward_speed = 0
                         self.turn_speed = 0
-            if self.forward_speed < 0.6:
+            if self.forward_speed < 0.7:
                 return self.forward_speed, self.turn_speed
         return 0, 0

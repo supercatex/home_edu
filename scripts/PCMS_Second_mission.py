@@ -25,7 +25,8 @@ publisher = rospy.Publisher(
     queue_size=1,
     latch=True
 )
-	
+
+
 def depth_detect(frame):
     try:
         image = frame[100:540, 100:380].copy()
@@ -38,7 +39,6 @@ def depth_detect(frame):
             min = np.min(index)
     
         print(min)
-    
         if min <= 750 and min >= 350:
             return True
         else:
@@ -46,6 +46,7 @@ def depth_detect(frame):
     
     except Exception:
         print("error")
+
         
 def listen_callback(data):
     global msg
@@ -78,6 +79,7 @@ if __name__ == '__main__':
     m.exec_servos_pos(10, 15, 0, -30)
     print("started")
     s.say("hello, I'm your assistant", "happy-1")
+    s.say("Please stand in front of me", "happy-1")
     _listen_publisher = rospy.Publisher("/home_edu_Listen/situation", String, queue_size=1)
     
     s.say("Please stand in front of me", "happy-1")
@@ -160,17 +162,16 @@ if __name__ == '__main__':
         image, x, y, z, alpha = obj.run(c.rgb_image, c.depth_image)
         
         if signal == True:
-            if obj.area < 8000 or obj.area is None:
+            if obj.area < 5000 or obj.area is None:
                 signal = False
                 start_time = time.time()
                 continue
             else:
                 m.exec_servos_pos(x, y, z, -60)
-                cv.imshow("image", image)
                 print('mani x, y, z:', x, y, z, -60)
                 continue
         else:
-            if obj.area < 8000 or obj.area is None:
+            if obj.area < 5000 or obj.area is None:
                 if time.time() - start_time > 3:
                     break
                 else:
@@ -189,7 +190,7 @@ if __name__ == '__main__':
     m.wait()
     
     m.exec_servos_pos(-2, 20, 15, -150, 1)
-	
+    
     s.say("gripped, i am going to the location")
     
     s.say("Please stand away from me", "wink")
@@ -200,7 +201,7 @@ if __name__ == '__main__':
     m.exec_servos_pos(20,10,0,-60,2)
     m.exec_servos_pos(20,10,0, 40,2)
     m.open()
-    s.say("please take the bag")
+    s.say("I have put the bag on the floor", "wink")
     
     s.say("i am now turning around to find you")
     
@@ -222,16 +223,16 @@ if __name__ == '__main__':
         position = g.detect_face(frame)
         if len(position) == 0:
             print('moving')
-            k.move(0, 0.3)
+            k.move(0, 0.4)
             cv.imshow("frame", frame)
         else:
             p1 = position[0]
             x_val = (p1[2] - p1[0]) / 2 + p1[0]
             print(x_val, frame.shape)
             if x_val < 300:
-                k.move(0, 0.3)
+                k.move(0, 0.4)
             elif x_val > 340:
-                k.move(0, -0.3)
+                k.move(0, -0.4)
             else:
                 time.sleep(1)
                 s.say("please follow me to the garage and stand behind me", "wink")
