@@ -22,7 +22,7 @@ class manipulator_track(object):
     
         if color == "brown":
             self.lower = [0, 50, 125]
-            self.upper = [25, 95, 220]
+            self.upper = [30, 95, 220]
     
         elif color == "white":
             self.lower = [95, 0, 200]
@@ -77,7 +77,7 @@ class manipulator_track(object):
     
             z = real_z
             
-            if z >= 600:
+            if z >= 1500:
                 return 1, 1, 1
             else:
                 pass
@@ -92,22 +92,25 @@ class manipulator_track(object):
             return 0, 0, 0
     
     def calculation(self, mid):
-        x0 = mid[0]
-        y0 = mid[1]
-        z0 = mid[2] / 10
+        try:
+            x0 = mid[0]
+            y0 = mid[1]
+            z0 = mid[2] / 10
     
-        # x1 = z0
-        # y1 = y0
-        # z1 = x0
-    
-        wR = 2 * z0 * math.tan(self.cameraH / 2)
-        hR = 2 * z0 * math.tan(self.cameraV / 2)
-        xR = (wR * x0) / 640 - wR / 2
-        yR = (hR * y0) / 480 - hR / 2
-        zR = z0
-    
-        print("Real x, y, z, w, h", xR, yR, zR, wR, hR)
-        return xR, yR, zR
+            # x1 = z0
+            # y1 = y0
+            # z1 = x0
+        
+            wR = 2 * z0 * math.tan(self.cameraH / 2)
+            hR = 2 * z0 * math.tan(self.cameraV / 2)
+            xR = (wR * x0) / 640 - wR / 2
+            yR = (hR * y0) / 480 - hR / 2
+            zR = z0
+        
+            print("Real x, y, z, w, h", xR, yR, zR, wR, hR)
+            return xR, yR, zR
+        except TypeError:
+            return 0, 0, 0
     
     def physical_distance(self, x, y, z):
         y0 = (36.5 - y)
@@ -129,18 +132,18 @@ class manipulator_track(object):
     def run(self, rgb_image, depth_image):
         if rgb_image is None or depth_image is None:
             
-            return 0, 0, 0, 0, 0
+            return rgb_image, False, 0, 0, 0, 0
         
         else:
             frame, mid, y0 = self.color_detect(rgb_image, depth_image)
-            if frame == 0 and mid == 0:
-                return 0, 0, 0, 0, 0
+            if frame is None:
+                return frame, False, 0, 0, 0, 0
 
             Rx, Ry, Rz = self.calculation(mid)
-        
+            
             x, y, z, a = self.physical_distance(Rx, Ry, Rz)
-        
-            return frame, x, y, z, a
+            
+            return frame, True, x, y, z, a
     
 
 if __name__ == "__main__":
@@ -151,7 +154,7 @@ if __name__ == "__main__":
     
     m = Manipulator()
     
-    obj = manipulator_track("white")
+    obj = manipulator_track("brown")
     
     signal = True
     
@@ -164,38 +167,43 @@ if __name__ == "__main__":
     
         print(obj.area)
         frame, image = c.depth_image, c.rgb_image
-        
-        if c.depth_image is None or c.rgb_image is None:
+    
+        image, status, x, y, z, alpha = obj.run(c.rgb_image, c.depth_image)
+    
+        if status == True:
+            cv2.imshow("image", image)
+            cv2.waitKey(1)
+        else:
+            cv2.imshow("image", image)
+            cv2.waitKey(1)
             continue
-            
-        image, x, y, z, alpha = obj.run(c.rgb_image, c.depth_image)
-        
-        if x == 0 and y == 0 and z == 0:
-            
-            continue
-        
-        cv2.imshow("image", image)
-        cv2.waitKey(1)
+
         if signal == True:
-            if obj.area < 15000 or obj.area is None:
+            if obj.area < 5000 or obj.area is None:
                 signal = False
                 start_time = time.time()
+                cv2.imshow("image", image)
+                cv2.waitKey(1)
                 continue
             else:
                 m.exec_servos_pos(x, y, z, -60)
                 print('mani x, y, z:', x, y, z, -60)
+                cv2.imshow("image", image)
+                cv2.waitKey(1)
                 continue
         else:
-            if obj.area < 15000 or obj.area is None:
+            if obj.area < 5000 or obj.area is None:
                 if time.time() - start_time > 3:
                     break
                 else:
+                    cv2.imshow("image", image)
+                    cv2.waitKey(1)
                     continue
             else:
                 signal = True
+                cv2.imshow("image", image)
+                cv2.waitKey(1)
                 continue
-        
-    
     print("end loop")
     
     time.sleep(1)
@@ -203,12 +211,15 @@ if __name__ == "__main__":
     m.close()
     
     m.reset()
+    20
+    m.exec_servos_pos(5,15,0,-65,2)
     m.wait()
     
-    m.exec_servos_pos(10, 20, 1, -45)
-    m.wait()
-    m.exec_servos_pos(-1, 25,  -15, -45)
-    m.wait()
+    time.sleep(2)
+    
+    m.exec_servos_pos(20,10,0,-60,2)
+    m.exec_servos_pos(24,10,0, 30,2)
+    m.open()
 
 
 cv2.destroyAllWindows()

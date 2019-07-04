@@ -137,13 +137,12 @@ if __name__ == '__main__':
 
     while True:
         a = turn_180_degree(chassis)
-        #a = 0
+        # a = 0
         if a == 0:
             P.say("Hello, may I have your attention please? I am going to take a photo for you, please be ready")
             time.sleep(2)
             P.say("Please look at my top camera which is with a red light. Ready? 3, 2, 1, chieese")
-            frame = c.rgb_image
-            image = cv.resize(frame, (1280, 960))
+            image = c.rgb_image
             time.sleep(1)
             cv.imwrite("/home/mustar/pcms/src/home_edu/scripts/temp.jpg", image)
             P.say("I've just take a photo for you")
@@ -205,7 +204,7 @@ if __name__ == '__main__':
             color = (0, 0, 255)
 
         cv.rectangle(image, (x, y), (x + w, y + h), color, 2)
-
+        cv.imwrite(image_path, image)
     # faces = face_cascade.detectMultiScale(gray, minSize=(50, 50))
     # for (x, y, w, h) in faces:
     #     cv.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)

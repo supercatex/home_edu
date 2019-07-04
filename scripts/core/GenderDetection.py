@@ -4,7 +4,6 @@ import cv2 as cv
 import numpy as np
 import os
 import rospy
-import dlib
 from Astra import Astra as astra
 
 
@@ -18,23 +17,21 @@ class GenderDetection(object):
             self.gender_lib_prototxt,
             self.gender_lib_model
         )
-        self._detector = dlib.get_frontal_face_detector()
+        self._detector = cv.CascadeClassifier("/home/mustar/pcms/src/home_edu/scripts/libs/haarcascade_frontalface_alt2.xml")
 
     def detect_face(self, image):
         face_position = list()
-        dets, _, _ = self._detector.run(image, False)
+        face_img = list()
+        dets = self._detector.detectMultiScale(image, minSize=(50, 50))
 
-        for i, d in enumerate(dets):
-            x1 = d.left()
-            y1 = d.top()
-            x2 = d.right()
-            y2 = d.bottom()
+        for (x, y, w, h) in dets:
 
-            if x1 < 0 or y1 < 0: continue
+            image = image[y:y+h, x:x+w].copy()
+        
+            face_img.append(image)
+            face_position.append([x, y, w, h])
 
-            face_position.append([x1, y1, x2, y2])
-
-        return face_position
+        return face_position, face_img
 
     def predict_gender(self, face_image):
         blob = cv.dnn.blobFromImage(face_image, 1, (277, 277), self.MODEL_MEAN_VALUES, swapRB=False)

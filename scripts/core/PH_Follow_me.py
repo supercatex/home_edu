@@ -73,7 +73,7 @@ class PH_Follow_me(object):
                     
                     notzero = len(nonzeros[0])
                     
-                    if val < 1300 or (len(frame) - notzero > notzero):
+                    if val < 1450 or (len(frame) - notzero > notzero):
                         self.forward_speed = self.calc_kp(val, self.horizan, self.p1)
                         
                         if not minLoc[0] == 0:

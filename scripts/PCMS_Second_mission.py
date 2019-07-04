@@ -4,20 +4,21 @@ import rospy
 import time
 import cv2 as cv
 import numpy as np
-#import FollowMe as follow
+# import FollowMe as follow
 from std_msgs.msg import String
 from core import RobotChassis as chassis
 from core import Kobuki as kobuki
 from core import Speaker as speaker
 from core import Speech2Text as speech2text
 from core import Astra as astra
-#from core import ServiceController as follow
-from turtlebot_msgs.srv import SetFollowState
 from core import GenderDetection as Gender
 from core import Manipulator as manipulator
 from core import PH_Follow_me as PH_Follow_me
 from manipulator_track import manipulator_track as manipulator_track
 import main
+from os import system
+
+system("rm -rf /home/mustar/pcms/src/home_edu/scripts/face_images/*")
 
 publisher = rospy.Publisher(
     "/home_edu/facial",
@@ -59,7 +60,7 @@ if __name__ == '__main__':
     msg = ' '
     rospy.init_node("home_edu_PCMS_Second_mission", anonymous=True)
     rate = rospy.Rate(20)
-    s = speaker(150)
+    s = speaker(150, 1.5)
     
     rospy.Subscriber(
         "/home_edu_Listen/msg",
@@ -78,8 +79,9 @@ if __name__ == '__main__':
     obj = manipulator_track("brown")
     m.exec_servos_pos(10, 15, 0, -30)
     print("started")
+    time.sleep(10)
     s.say("hello, I'm your assistant", "happy-1")
-    s.say("Please stand in front of me", "happy-1")
+
     _listen_publisher = rospy.Publisher("/home_edu_Listen/situation", String, queue_size=1)
     
     s.say("Please stand in front of me", "happy-1")
@@ -95,7 +97,7 @@ if __name__ == '__main__':
     s.say("please stand still and say follow me")
 
     _listen_publisher.publish("true")
-    goal = [[-2.57, -2.11, -0.00143], [-5.74, -1.53, -0.00143], [-8.11, 2.35, -0.00143]]
+    goal = [[-4.89, 2.46, -2.79], [-5.55, -1.73, 1.57], [-2.72, 1.89, -2.79]]
     
     flag = 0
     flag2 = 0
@@ -158,38 +160,52 @@ if __name__ == '__main__':
     
         print(obj.area)
         frame, image = c.depth_image, c.rgb_image
-
-        image, x, y, z, alpha = obj.run(c.rgb_image, c.depth_image)
-        
+    
+        image, status, x, y, z, alpha = obj.run(c.rgb_image, c.depth_image)
+    
+        if status == True:
+            cv.imshow("image", image)
+            cv.waitKey(1)
+        else:
+            cv.imshow("image", image)
+            cv.waitKey(1)
+            continue
+    
         if signal == True:
             if obj.area < 5000 or obj.area is None:
                 signal = False
                 start_time = time.time()
+                cv.imshow("image", image)
+                cv.waitKey(1)
                 continue
             else:
                 m.exec_servos_pos(x, y, z, -60)
                 print('mani x, y, z:', x, y, z, -60)
+                cv.imshow("image", image)
+                cv.waitKey(1)
                 continue
         else:
             if obj.area < 5000 or obj.area is None:
                 if time.time() - start_time > 3:
                     break
                 else:
+                    cv.imshow("image", image)
+                    cv.waitKey(1)
                     continue
             else:
                 signal = True
+                cv.imshow("image", image)
+                cv.waitKey(1)
                 continue
-    
-    print("end simulate")
-    
+    print("end loop")
+
+    m.close()
+
+    m.wait()
     
     m.close()
     
-    m.exec_servos_pos(15, 25, 0, -60)
-    
-    m.wait()
-    
-    m.exec_servos_pos(-2, 20, 15, -150, 1)
+    m.reset()
     
     s.say("gripped, i am going to the location")
     
@@ -198,9 +214,18 @@ if __name__ == '__main__':
     print(goal[i][0], goal[i][1], goal[i][2])
     chassis.move_to(goal[i][0], goal[i][1], goal[i][2])
     s.say("arrived to goal")
+    m.reset()
     m.exec_servos_pos(20,10,0,-60,2)
-    m.exec_servos_pos(20,10,0, 40,2)
+    
+    m.exec_servos_pos(18,10,0,35,2)
+    m.wait()
     m.open()
+    time.sleep(2)
+    
+    m.wait()
+    
+    m.reset()
+    
     s.say("I have put the bag on the floor", "wink")
     
     s.say("i am now turning around to find you")
@@ -220,7 +245,7 @@ if __name__ == '__main__':
 
     while not rospy.is_shutdown():
         frame = cam.rgb_image
-        position = g.detect_face(frame)
+        position, face_images = g.detect_face(frame)
         if len(position) == 0:
             print('moving')
             k.move(0, 0.4)
@@ -229,17 +254,31 @@ if __name__ == '__main__':
             p1 = position[0]
             x_val = (p1[2] - p1[0]) / 2 + p1[0]
             print(x_val, frame.shape)
-            if x_val < 300:
-                k.move(0, 0.4)
+            if x_val < 290:
+                k.move(0, 0.3)
             elif x_val > 340:
-                k.move(0, -0.4)
+                k.move(0, -0.3)
             else:
                 time.sleep(1)
-                s.say("please follow me to the garage and stand behind me", "wink")
-                chassis.move_to(px, py, pz)
-                s.say("arrived to the garage")
+                for i in range(len(face_images)):
+                    cv.imwrite("./face_images/face%d.jpg" % i, face_images[i])
                 break
+        cv.waitKey(1)
                 
+    start_time = time.time()
+    while True:
+        if time.time() - start_time < 2:
+            k.move(0.2, 0)
+        else:
+             break
+            
+    while True:
+        time.sleep(1)
+        s.say("ok, i have found you")
+        s.say("please follow me to the garage and stand behind me", "wink")
+        chassis.move_to(px, py, pz)
+        s.say("arrived to the garage")
+        break
         
         '''
             for x1, y1, x2, y2 in position:
@@ -254,7 +293,6 @@ if __name__ == '__main__':
                     time.sleep(5)
                     break
         '''
-        cv.waitKey(1)
     print("end of program")
     s.say("finished task", "wink")
     
