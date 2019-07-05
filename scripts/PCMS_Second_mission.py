@@ -4,7 +4,6 @@ import rospy
 import time
 import cv2 as cv
 import numpy as np
-# import FollowMe as follow
 from std_msgs.msg import String
 from core import RobotChassis as chassis
 from core import Kobuki as kobuki
@@ -77,9 +76,9 @@ if __name__ == '__main__':
     m = manipulator()
     k = kobuki()
     obj = manipulator_track("brown")
-    m.exec_servos_pos(10, 15, 0, -30)
     print("started")
-    time.sleep(10)
+    time.sleep(20)
+    m.exec_servos_pos(10, 15, 0, -30)
     s.say("hello, I'm your assistant", "happy-1")
 
     _listen_publisher = rospy.Publisher("/home_edu_Listen/situation", String, queue_size=1)
@@ -128,34 +127,15 @@ if __name__ == '__main__':
     px, py, pz = chassis.get_current_pose()
     print(px, py, pz)
     print('finished append')
-    s.say("the robot have stopped")
-
-    m.wait()
+    s.say("the robot have stopped, okay this is a futuristic tesla car")
     
     signal = True
     
+    s.say("please give me the bag")
+    
     m.open()
     
-    _listen_publisher.publish("true")
-    
-    while True:
-        place = str(main.answer_question_from_data(msg, kdata)['answer']).lower()
-        if place == 'kitchen':
-            i = 0
-            break
-        elif place == 'bedroom':
-            i = 1
-            break
-        elif place == 'living room':
-            i = 2
-            break
-        elif len(place) > 5:
-            s.say("please tell me where should i put the bag")
-
-    _listen_publisher.publish("false")
-    s.say("you said " + str(place))
-
-    s.say("please give me the bag")
+    start_time2 = time.time()
     while not rospy.is_shutdown():
     
         print(obj.area)
@@ -170,9 +150,13 @@ if __name__ == '__main__':
             cv.imshow("image", image)
             cv.waitKey(1)
             continue
-    
+        
+        if time.time() - start_time2 > 20:
+            break
+        else:
+            pass
         if signal == True:
-            if obj.area < 5000 or obj.area is None:
+            if obj.area < 6000 or obj.area is None:
                 signal = False
                 start_time = time.time()
                 cv.imshow("image", image)
@@ -185,7 +169,7 @@ if __name__ == '__main__':
                 cv.waitKey(1)
                 continue
         else:
-            if obj.area < 5000 or obj.area is None:
+            if obj.area < 6000 or obj.area is None:
                 if time.time() - start_time > 3:
                     break
                 else:
@@ -199,32 +183,50 @@ if __name__ == '__main__':
                 continue
     print("end loop")
 
+    time.sleep(1)
+
     m.close()
 
-    m.wait()
+    m.exec_servos_pos(5, 25, 0, -30)
     
-    m.close()
-    
-    m.reset()
-    
-    s.say("gripped, i am going to the location")
+    s.say("gripped")
+    s.say("please say the location of the bag")
+    _listen_publisher.publish("true")
+
+    while True:
+        place = main.answer_question_from_data(msg, kdata)
+        print(place)
+        place = str(place['answer']).lower()
+        if place == 'kitchen':
+            i = 0
+            break
+        elif place == 'bedroom':
+            i = 1
+            break
+        elif place == 'living room':
+            i = 2
+            break
+        elif len(place) > 20:
+            s.say("please tell me where should i put the bag")
+
+    _listen_publisher.publish("false")
+    s.say("you said " + str(place))
     
     s.say("Please stand away from me", "wink")
     time.sleep(1.5)
     print(goal[i][0], goal[i][1], goal[i][2])
     chassis.move_to(goal[i][0], goal[i][1], goal[i][2])
     s.say("arrived to goal")
-    m.reset()
-    m.exec_servos_pos(20,10,0,-60,2)
-    
-    m.exec_servos_pos(18,10,0,35,2)
+
+    m.exec_servos_pos(20, 15, 0, -30)
+
+    m.exec_servos_pos(20, 10, 0, 35)
+
     m.wait()
     m.open()
     time.sleep(2)
-    
-    m.wait()
-    
-    m.reset()
+
+    m.exec_servos_pos(12, 15, 0, -30)
     
     s.say("I have put the bag on the floor", "wink")
     
@@ -234,43 +236,38 @@ if __name__ == '__main__':
     g = Gender("/home/mustar/pcms/src/home_edu/scripts/libs/deploy_gender.prototxt", "/home/mustar/pcms/src/home_edu/scripts/libs/gender_net.caffemodel")
     
     cam = astra("top_camera")
-    # while True:
-    #     # frame = c.rgb_image
-    #     k.move(0, 0.3)
-    #     status = depth_detect(c.depth_image)
-    #     if status == True:
-    #         print("ok")
-    #         break
-    #
 
     while not rospy.is_shutdown():
         frame = cam.rgb_image
-        position, face_images = g.detect_face(frame)
+        position, frame, face_images = g.detect_face(frame)
         if len(position) == 0:
             print('moving')
             k.move(0, 0.4)
             cv.imshow("frame", frame)
         else:
             p1 = position[0]
-            x_val = (p1[2] - p1[0]) / 2 + p1[0]
+            x_val = (p1[2] / 2 + p1[0])
             print(x_val, frame.shape)
-            if x_val < 290:
+            if x_val < 300:
                 k.move(0, 0.3)
             elif x_val > 340:
                 k.move(0, -0.3)
             else:
-                time.sleep(1)
+                print("ok")
                 for i in range(len(face_images)):
                     cv.imwrite("./face_images/face%d.jpg" % i, face_images[i])
                 break
+            cv.imshow("frame", frame)
         cv.waitKey(1)
-                
+
     start_time = time.time()
     while True:
-        if time.time() - start_time < 2:
+        if time.time() - start_time < 2.5:
             k.move(0.2, 0)
         else:
-             break
+            break
+                
+    start_time = time.time()
             
     while True:
         time.sleep(1)
@@ -280,20 +277,6 @@ if __name__ == '__main__':
         s.say("arrived to the garage")
         break
         
-        '''
-            for x1, y1, x2, y2 in position:
-                x_val = (x2 - x1) / 2 + x1
-                cv.imshow('frame', frame)
-                if x_val >= 360:
-                    k.move(0, 0.2)
-                elif x_val <= 280:
-                    k.move(0, 0.2)
-                elif 360 < x_val > 280:
-                    k.move(0, 0)
-                    time.sleep(5)
-                    break
-        '''
     print("end of program")
     s.say("finished task", "wink")
-    
     

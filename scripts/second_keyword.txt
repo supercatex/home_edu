@@ -5,12 +5,11 @@ follow, follow me, call, call me
 
 please stop following me
 stop
-stop, please, following, call, call me
+stop, please, following, call, call me, car
 
 please go to the living room
 living room
 living
-room
 
 please go to the bedroom
 bedroom

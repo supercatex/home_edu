@@ -21,17 +21,15 @@ class GenderDetection(object):
 
     def detect_face(self, image):
         face_position = list()
-        face_img = list()
         dets = self._detector.detectMultiScale(image, minSize=(50, 50))
+        crop = None
 
         for (x, y, w, h) in dets:
-
-            image = image[y:y+h, x:x+w].copy()
-        
-            face_img.append(image)
+            cv.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            crop = image[y : y + h, x : x + w].copy()
             face_position.append([x, y, w, h])
 
-        return face_position, face_img
+        return face_position, image, crop
 
     def predict_gender(self, face_image):
         blob = cv.dnn.blobFromImage(face_image, 1, (277, 277), self.MODEL_MEAN_VALUES, swapRB=False)
@@ -60,5 +58,4 @@ if __name__ == '__main__':
         if cv.waitKey(1) == ord('q'):
             break
 
-    cap.release()
     cv.destroyAllWindows()

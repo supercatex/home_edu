@@ -27,7 +27,7 @@ while True:
         print(msg)
         my_publisher.publish(msg)
     elif _isListen == "wait":
-        time.sleep(25)
+        time.sleep(20)
         pass
     else:
         pass

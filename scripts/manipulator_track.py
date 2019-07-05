@@ -21,15 +21,15 @@ class manipulator_track(object):
         self.cameraV = 49.5 * math.pi / 180
     
         if color == "brown":
-            self.lower = [0, 50, 125]
-            self.upper = [30, 95, 220]
+            self.lower = [0, 20, 100]
+            self.upper = [50, 110, 210]
     
         elif color == "white":
             self.lower = [95, 0, 200]
             self.upper = [150, 50, 255]
         else:
-            self.lower = [0, 50, 125]
-            self.upper = [25, 95, 220]
+            self.lower = [0, 30, 110]
+            self.upper = [50, 90, 200]
     
     def color_detect(self, rgb_image, depth_image):
         lower = np.array(self.lower, dtype="uint8")
@@ -179,7 +179,7 @@ if __name__ == "__main__":
             continue
 
         if signal == True:
-            if obj.area < 5000 or obj.area is None:
+            if obj.area < 6000 or obj.area is None:
                 signal = False
                 start_time = time.time()
                 cv2.imshow("image", image)
@@ -192,7 +192,7 @@ if __name__ == "__main__":
                 cv2.waitKey(1)
                 continue
         else:
-            if obj.area < 5000 or obj.area is None:
+            if obj.area < 6000 or obj.area is None:
                 if time.time() - start_time > 3:
                     break
                 else:
@@ -210,16 +210,19 @@ if __name__ == "__main__":
     
     m.close()
     
-    m.reset()
-    20
-    m.exec_servos_pos(5,15,0,-65,2)
-    m.wait()
+    m.exec_servos_pos(5,25,0,-30)
     
-    time.sleep(2)
-    
-    m.exec_servos_pos(20,10,0,-60,2)
-    m.exec_servos_pos(24,10,0, 30,2)
-    m.open()
+    time.sleep(5)
 
+   
+    m.exec_servos_pos(20, 15, 0, -30)
+
+    m.exec_servos_pos(20, 10, 0, 35)
+
+    m.wait()
+    m.open()
+    time.sleep(2)
+
+    m.exec_servos_pos(12, 15, 0, -30)
 
 cv2.destroyAllWindows()
