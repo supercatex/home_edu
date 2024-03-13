@@ -5,6 +5,7 @@ from geometry_msgs.msg import Pose, PoseWithCovarianceStamped, Point, Quaternion
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from tf.transformations import quaternion_from_euler
 from actionlib_msgs.msg import GoalStatusArray
+from std_srvs.srv import Empty
 import time
 
 '''
@@ -94,6 +95,11 @@ class RobotChassis:
         rospy.wait_for_message("/amcl_pose", GoalStatusArray)
         rospy.loginfo("waiting for /move_base/status")
         rospy.wait_for_message("/move_base/status", GoalStatusArray)
+
+        # Services        
+        self.clear_costmaps = rospy.ServiceProxy("/move_base/clear_costmaps", Empty)
+        rospy.sleep(1)
+        
         rospy.loginfo("RoboChassis OK")
     
     # Set current pose.
@@ -130,6 +136,8 @@ class RobotChassis:
     
     # Move to Point.
     def move_to(self, x, y, theta):
+        self.clear_costmaps()
+        
         location = self.point_to_pose(x, y, theta)
         self.goal = MoveBaseGoal()
         self.goal.target_pose.header.frame_id = self.frame_id
