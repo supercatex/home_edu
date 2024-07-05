@@ -173,18 +173,24 @@ class RobotChassis:
     def get_current_pose(self):
         point = self.current_pose.pose.pose.position
         q = [
-            self.imu.orientation.x,
-            self.imu.orientation.y,
-            self.imu.orientation.z,
-            self.imu.orientation.w
+            self.current_pose.pose.pose.orientation.x,
+            self.current_pose.pose.pose.orientation.y,
+            self.current_pose.pose.pose.orientation.z,
+            self.current_pose.pose.pose.orientation.w
         ]
         roll, pitch, yaw = euler_from_quaternion(q)
         return point.x, point.y, yaw
     
     def get_goal_pose(self):
         point = self.last_goal_pose.pose.position
-        theta = self.last_goal_pose.pose.orientation.z
-        return point.x, point.y, theta
+        q = [
+            self.last_goal_pose.pose.pose.orientation.x,
+            self.last_goal_pose.pose.pose.orientation.y,
+            self.last_goal_pose.pose.pose.orientation.z,
+            self.last_goal_pose.pose.pose.orientation.w
+        ]
+        roll, pitch, yaw = euler_from_quaternion(q)
+        return point.x, point.y, yaw
     
     def status_callback(self, data):
         self.status = data
